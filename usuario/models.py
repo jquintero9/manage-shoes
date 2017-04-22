@@ -45,7 +45,8 @@ class Usuario(models.Model):
         validators=[
             RegexValidator(regex=regex['rol'], message=error_messages['rol'])
         ],
-        error_messages={'required': u'¿Cúal es el rol del usuario?'}
+        error_messages={'required': u'¿Cúal es el rol del usuario?'},
+        choices=((ADMIN, 'Administrador'), (VENDEDOR, 'Vendedor'))
     )
 
     class Meta:
@@ -53,6 +54,57 @@ class Usuario(models.Model):
 
     def __unicode__(self):
         return self.user.username
+
+
+class Departamento(models.Model):
+
+    """
+    Modelo Departamento: Representa los departamentos de Colombia.
+    """
+
+    nombre = models.CharField(
+        max_length=20,
+        validators=[
+            RegexValidator(regex=regex['texto'], message=error_messages['texto'])
+        ],
+        error_messages={'required': u'¿Cúal es el nombre del Departamento?'},
+        unique=True
+    )
+
+    class Meta:
+        db_table = 'departamentos'
+        verbose_name = 'departamento'
+        verbose_name_plural = 'departamentos'
+        ordering = ['nombre']
+
+    def __unicode__(self):
+        return self.nombre
+
+
+class Ciudad(models.Model):
+
+    """
+    Modelo Ciudad: Representa las ciudades donde viven los clientes.
+    """
+
+    nombre = models.CharField(
+        max_length=30,
+        validators=[
+            RegexValidator(regex=regex['texto'], message=error_messages['texto'])
+        ],
+        error_messages={'required': u'¿Cúal es el nombre de la Ciudad?'}
+    )
+
+    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'ciudades'
+        verbose_name = 'ciudad'
+        verbose_name_plural = 'ciudades'
+        ordering = ['nombre']
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.nombre, self.departamento)
 
 
 class Cliente(models.Model):
@@ -86,6 +138,8 @@ class Cliente(models.Model):
         ],
         error_messages={'required': u'¿Cúal es tu apellido?'}
     )
+
+    ciudad = models.ForeignKey('Ciudad', on_delete=models.PROTECT)
 
     direccion = models.CharField(
         max_length=80,

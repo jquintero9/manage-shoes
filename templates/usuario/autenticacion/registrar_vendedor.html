@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Vendedor{% endblock %}
+
+{% block content %}
+
+<!--<form action=""> {% csrf_token %}s
+    {{ user_form }}
+    {{ usuario_form }}
+    <button type="submit">Registrarse</button>
+</form>
+-->
+
+<div class="row">
+    <form id="form-registro" class="z-depth-4 col s12 m8">
+        <div class="row">
+            <h2 class="titulo-form blue-text text-darken-3 col s12">Registro Vendedor</h2>
+        </div>
+      <div class="row">
+        <div class="input-field col s11 m6">
+          <i class="material-icons prefix">account_circle</i>
+          {{ usuario_form.nombres }}
+          <label for="id_nombres">Nombres</label>
+        </div>
+        <div class="input-field col s11 m6">
+            <i class="material-icons prefix">account_circle</i>
+            {{ usuario_form.apellidos }}
+            <label for="id_apellidos">Apellidos</label>
+        </div>
+      </div>
+        <div class="row">
+            <div class="input-field col s11">
+                <i class="material-icons prefix">email</i>
+                {{ user_form.email }}
+                <label for="id_email">Correo</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s11 m6">
+                <i class="material-icons prefix">lock</i>
+                {{ user_form.password }}
+                <label for="id_password">Contraseña</label>
+            </div>
+            <div class="input-field col s11 m6">
+                <i class="material-icons prefix">lock</i>
+                {{ user_form.confirmar_password }}
+                <label for="id_confirmar_password">Confirmar Contraseña</label>
+            </div>
+        </div>
+    </form>
+  </div>
+
+{% endblock %}
