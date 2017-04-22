@@ -3,51 +3,88 @@
 {% block title %}Registrar Vendedor{% endblock %}
 
 {% block content %}
-
-<!--<form action=""> {% csrf_token %}s
-    {{ user_form }}
-    {{ usuario_form }}
-    <button type="submit">Registrarse</button>
-</form>
--->
-
 <div class="row">
-    <form id="form-registro" class="z-depth-4 col s12 m8">
+    <form id="form-center" class="z-depth-4 col s12 m8" action="" method="POST"> {% csrf_token %}
+        <input type="hidden" name="rol" value="vendedor" />
         <div class="row">
             <h2 class="titulo-form blue-text text-darken-3 col s12">Registro Vendedor</h2>
         </div>
-      <div class="row">
-        <div class="input-field col s11 m6">
-          <i class="material-icons prefix">account_circle</i>
-          {{ usuario_form.nombres }}
-          <label for="id_nombres">Nombres</label>
-        </div>
-        <div class="input-field col s11 m6">
-            <i class="material-icons prefix">account_circle</i>
-            {{ usuario_form.apellidos }}
-            <label for="id_apellidos">Apellidos</label>
-        </div>
-      </div>
         <div class="row">
-            <div class="input-field col s11">
+            <div class="input-field col s11 m6"> <!-- Input Nombres -->
+                <i class="material-icons prefix">account_circle</i>
+                {{ usuario_form.nombres }}
+                <label for="id_nombres">Nombres</label>
+                {% if usuario_form.nombres.errors %}
+                <div class="message-input">
+                    {% for error in usuario_form.nombres.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="input-field col s11 m6"> <!-- Input Apellidos -->
+                <i class="material-icons prefix">account_circle</i>
+                {{ usuario_form.apellidos }}
+                <label for="id_apellidos">Apellidos</label>
+                {% if usuario_form.apellidos.errors %}
+                <div class="message-input">
+                    {% for error in usuario_form.apellidos.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s11"> <!-- Input Correo -->
                 <i class="material-icons prefix">email</i>
                 {{ user_form.email }}
                 <label for="id_email">Correo</label>
+                {% if user_form.email.errors %}
+                <div class="message-input">
+                {% for error in user_form.email.errors %}
+                    {{ error }}
+                {% endfor %}
+                </div>
+                {% endif %}
             </div>
         </div>
         <div class="row">
-            <div class="input-field col s11 m6">
+            <div class="input-field col s11 m6"> <!-- Input Password -->
                 <i class="material-icons prefix">lock</i>
                 {{ user_form.password }}
                 <label for="id_password">Contraseña</label>
+                {% if user_form.password.errors %}
+                <div class="message-input">
+                {% for error in user_form.password.errors %}
+                    {{ error }}
+                {% endfor %}
+                </div>
+                {% endif %}
             </div>
-            <div class="input-field col s11 m6">
+            <div class="input-field col s11 m6"> <!-- Input Confirmar Password -->
                 <i class="material-icons prefix">lock</i>
                 {{ user_form.confirmar_password }}
                 <label for="id_confirmar_password">Confirmar Contraseña</label>
+                {% if user_form.confirmar_password.errors %}
+                <div class="message-input">
+                {% for error in user_form.confirmar_password.errors %}
+                    {{ error }}
+                {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div id="last-row" class="row">
+            <div class="input-field col s12 m7"> <!-- Botón Submit -->
+                <button class="btn waves-effect waves-light" type="submit">Registrarse
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+            <div class="input-field col s12 m5"> <!-- Botón Iniciar Sesión    -->
+                <a class="link-form" href="{% url 'usuario:iniciar_sesion' %}">¿Ya tienes una cuenta de vendedor?</a>
             </div>
         </div>
     </form>
   </div>
-
 {% endblock %}

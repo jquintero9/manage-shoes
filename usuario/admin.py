@@ -15,7 +15,15 @@ class ClienteAdmin(admin.ModelAdmin):
         model = Cliente
 
 
+class UsuarioAdmin(admin.ModelAdmin):
+
+    list_display = ['user', 'nombres', 'apellidos', 'rol', 'activo']
+
+    class Meta:
+        model = Usuario
+
+
 admin.site.register(Ciudad)
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(Departamento)
-admin.site.register(Usuario)
+admin.site.register(Usuario, UsuarioAdmin)

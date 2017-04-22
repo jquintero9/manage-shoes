@@ -1,9 +1,38 @@
 
-form#form-registro {
+form#form-center {
     float: none;
-    margin: 132px auto 160px auto;
+    margin: 64px auto 150px auto;
 }
+
+div#input-email,
+div#input-password,
+div#input-submit {
+    float: none;
+    margin: 0 auto;
+}
+
+div#input-submit { margin-bottom: 32px; }
 
 .titulo-form {
     text-align: center;
 }
+
+.last-input
+{
+    margin-bottom: 32px;
+}
+
+div#last-row { padding-bottom: 10px; }
+
+.message-input {
+    border: orange 1px solid;
+    border-radius: 10px;
+    background-color: #DDD;
+    padding: 10px;
+}
+
+a.link-form {
+    text-decoration: underline;
+}
+
+

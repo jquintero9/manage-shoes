@@ -14,21 +14,27 @@
     <div class="navbar-fixed">
         <nav class="blue darken-3">
             <div class="nav-wrapper">
-                <a href="#!" class="brand-logo">Logo</a>
+                <a href="#!" class="brand-logo">MANAGE SHOES</a>
                 <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="{% url 'cuentas:registrar_vendedor' %}">Registrar</a></li>
+                    {% if not user.is_authenticated %}
+                    <li><a href="{% url 'usuario:registrar_vendedor' %}">Registrar</a></li>
+                    <li><a href="{% url 'usuario:iniciar_sesion' %}">Iniciar Sesión</a></li>
+                    {% else %}
+                    <li><a href="{% url 'usuario:cerrar_sesion' %}">Salir</a></li>
+                    {% endif %}
                 </ul>
                 <ul class="side-nav" id="mobile-demo">
-                    <li><a href="{% url 'cuentas:registrar_vendedor' %}">Registrar</a></li>
+                    <li><a href="{% url 'usuario:registrar_vendedor' %}">Registrar</a></li>
                 </ul>
             </div>
         </nav>
     </div>
     {% endblock %}
-
+    <div class="container">
     {% block content %}
     {% endblock %}
+    </div>
 
     {% block footer %}
     <footer class="page-footer blue darken-4">

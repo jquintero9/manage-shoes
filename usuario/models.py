@@ -49,6 +49,8 @@ class Usuario(models.Model):
         choices=((ADMIN, 'Administrador'), (VENDEDOR, 'Vendedor'))
     )
 
+    activo = models.BooleanField(default=False)
+
     class Meta:
         db_table = 'usuarios'
 

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Bienvenido a Shoes Manage - Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="row">
+    <form id="form-center" class="z-depth-4 col s12 m7" action="" method="POST"> {% csrf_token %}
+        <input type="hidden" name="rol" value="vendedor" />
+        <div class="row">
+            <h2 class="titulo-form blue-text text-darken-3 col s12">Iniciar Sesión</h2>
+        </div>
+        {% if messages %} <!-- Si hay mensajes de error, se muestran en este bloque -->
+        <div class="row">
+            <div class="message-input">
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        <div class="row"> <!-- Input Email -->
+            <div id="input-email" class="input-field col s12 m10">
+                <i class="material-icons prefix">email</i>
+                {{ form.email }}
+                <label for="id_email">Correo</label>
+            </div>
+        </div>
+        <div class="row"> <!-- Input Password -->
+            <div id="input-password" class="input-field col s12 m10">
+                <i class="material-icons prefix">lock</i>
+                {{ form.password }}
+                <label for="id_password">Contraseña</label>
+            </div>
+        </div>
+        <div id="last-row" class="row">
+            <div class="input-field col s12 m7"> <!-- Botón Submit -->
+                <button class="btn waves-effect waves-light" type="submit">Inicar Sesión
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+            <div class="input-field col s12 m5"> <!-- Botón Crear Cuenta Vendedor    -->
+                <a class="link-form" href="{% url 'usuario:registrar_vendedor' %}">Crear una cuenta de vendedor</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
