@@ -1,6 +1,10 @@
 #! usr/bin/local
 # coding: latin-1
 
+from django.template import loader
+from django.core.mail import send_mail
+from django.conf import settings
+
 regex = {
     'texto': r'^[A-Za-záéíóúÁÉÍÓÚ\s]+$',
     'rol': r'^(administrador|vendedor)$',
@@ -19,3 +23,24 @@ error_messages = {
     'password': u'La contraseña debe tener máximo un caracter especial($@$!%*?&), '
                 u'una minuscúla, una mayuscúla y un dígito.'
 }
+
+
+def enviar_email(email, nombre):
+
+    html_message = loader.render_to_string(
+        'usuario/autenticacion/email.html',
+        {
+            'nombre': nombre,
+        }
+    )
+
+    subject = 'Manage Shoes - Tu cuenta ha sido activada.'
+
+    send_mail(
+        subject=subject,
+        message='Tu cuenta ha sido activada.',
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[email],
+        fail_silently=True,
+        html_message=html_message
+    )

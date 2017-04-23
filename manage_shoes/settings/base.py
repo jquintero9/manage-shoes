@@ -1,3 +1,6 @@
+#!usr/local/bin
+# coding: latin-1
+
 """
 Django settings for manage_shoes project.
 
@@ -122,3 +125,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+"""
+Configuración para el envío de e-mails desde la aplicación hacia los
+usuarios.
+"""
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 25
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+

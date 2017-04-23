@@ -3,6 +3,7 @@
 {% block title %}Bienvenido a Shoes Manage - Iniciar Sesión{% endblock %}
 
 {% block content %}
+<div class="container">
 <div class="row">
     <form id="form-center" class="z-depth-4 col s12 m7" action="" method="POST"> {% csrf_token %}
         <input type="hidden" name="rol" value="vendedor" />
@@ -34,7 +35,7 @@
         </div>
         <div id="last-row" class="row">
             <div class="input-field col s12 m7"> <!-- Botón Submit -->
-                <button class="btn waves-effect waves-light" type="submit">Inicar Sesión
+                <button class="btn waves-effect waves-light" type="submit">Acceder
                     <i class="material-icons right">send</i>
                 </button>
             </div>
@@ -43,5 +44,6 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 {% endblock %}

@@ -3,5 +3,15 @@
 {% block title %}Home Admin - {{ user }}{% endblock %}
 
 {% block content %}
-<h2>Home del Administrador</h2>
+{% include 'mensajes.html' %}
+<div class="row">
+    {% include 'usuario/admin/menu_admin.html' %}
+    <div class="col s12 m8 l9">
+        <p>Home</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
 {% endblock %}

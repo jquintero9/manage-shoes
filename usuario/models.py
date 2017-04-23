@@ -53,6 +53,13 @@ class Usuario(models.Model):
 
     class Meta:
         db_table = 'usuarios'
+        permissions = [
+            ('es_administrador', 'es administrador'),
+            ('es_vendedor', 'es vendedor')
+        ]
+
+    def nombre_completo(self):
+        return '%s %s' % (self.nombres, self.apellidos)
 
     def __unicode__(self):
         return self.user.username

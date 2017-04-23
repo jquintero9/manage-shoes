@@ -1,0 +1,7 @@
+{% if messages %}
+<div class="messages-input">
+    {% for message in messages %}
+    <span>{{ message }}</span>
+    {% endfor %}
+</div>
+{% endif%}

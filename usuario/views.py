@@ -5,11 +5,14 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import View
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from .forms import UserForm, UsuarioForm, LoginForm
 from .models import Usuario
+from .utils import enviar_email
 
 
 class RegistroVendedor(View):
@@ -46,7 +49,7 @@ class RegistroVendedor(View):
         el método POST.
         Primero de validan los datos del formulario user_form y luego se crea la instancia
         del modelo User. Posteriormente se válida el formulario usuario_form y luego se crea
-        la instancia del modelo Usuario.
+        la instancia del modelo Usuario y se agrega el permiso correspondiente.
         :param request: Contiene la información que fuen enviada mediante la
         petición HTTP.
         :return: Redireccionada al ususario a otra vista dependiendo del resultado
@@ -64,6 +67,9 @@ class RegistroVendedor(View):
                 password=self.user_form.cleaned_data.get('password'),
                 email=self.user_form.cleaned_data.get('email')
             )
+
+            permiso_vendedor = Permission.objects.get(name='es vendedor')
+            user.user_permissions.add(permiso_vendedor)
 
             user.save()
 
@@ -150,6 +156,73 @@ class InicioSesion(View):
         context = {'form': self.form_class}
 
         return render(request, self.template_name, context)
+
+
+class ActivacionCuentas(LoginRequiredMixin, View,):
+
+    """
+    Permite activar las cuentas de los usuarios Vendedores.
+    """
+
+    template_name = 'usuario/admin/activar_cuentas.html'
+    activo = 'on'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+    permission_required = 'usuario.es_administrador'
+
+    def get(self, request):
+
+        if request.user.has_perm(self.permission_required):
+
+            usuarios_inactivos = Usuario.objects.filter(activo=False)
+
+            context = {'usuarios': usuarios_inactivos}
+
+            return render(request, self.template_name, context)
+        else:
+            raise PermissionDenied
+
+    def post(self, request):
+
+        data = request.POST.items()
+
+        print data
+
+        for email, switch in data:
+            print email
+            print switch
+            try:
+                user = User.objects.get(username=email)
+                usuario = Usuario.objects.get(user=user)
+
+                if switch == self.activo:
+                    usuario.activo = True
+                    usuario.save()
+                    enviar_email(user.username, usuario.nombre_completo())
+
+            except ObjectDoesNotExist:
+                messages.error(request, u'Ocurrio un error al procesar la solicitud.')
+
+        messages.success(request, u'Las cuentas han sido activadas correctamente.')
+        return HttpResponseRedirect(reverse_lazy('usuario:admin_home'))
+
+
+class HomeAdmin(LoginRequiredMixin, View):
+
+    template_name = 'usuario/admin/home.html'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+
+    def get(self, request):
+
+        return render(request, self.template_name, {})
+
+
+class HomeVendedor(LoginRequiredMixin, View):
+
+    template_name = 'usuario/vendedor/home.html'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+
+    def get(self, request):
+        return render(request, self.template_name, {})
 
 
 def cerrar_sesion(request):
