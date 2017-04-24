@@ -1,15 +1,16 @@
 #!usr/local/bin
 # coding: latin-1
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import View
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from .forms import UserForm, UsuarioForm, LoginForm
 from .models import Usuario
 from .utils import enviar_email
@@ -100,6 +101,7 @@ class InicioSesion(View):
 
     template_name = 'usuario/autenticacion/iniciar_sesion.html'
     form_class = None
+    success_url = None
 
     def get(self, request):
 
@@ -142,12 +144,12 @@ class InicioSesion(View):
                 usuario = Usuario.objects.get(user=user)
                 if usuario.activo:
                     login(request, user=user)
-                    request.session['rol'] = usuario.rol
-                    url_admin = reverse_lazy('usuario:admin_home')
-                    url_vendedor = reverse_lazy('usuario:vendedor_home')
-                    url_redirect = url_admin if usuario.rol == Usuario.ADMIN else url_vendedor
 
-                    return HttpResponseRedirect(url_redirect)
+                    if user.has_perm(Usuario.PERMISO_ADMIN):
+                        self.success_url = reverse_lazy('usuario:admin_home')
+                    elif user.has_perm(Usuario.PERMISO_VENDEDOR):
+                        self.success_url = reverse_lazy('usuario:vendedor_home')
+                    return HttpResponseRedirect(self.success_url)
                 else:
                     messages.warning(request, u'Esta cuenta no está activa.')
             else:
@@ -167,11 +169,10 @@ class ActivacionCuentas(LoginRequiredMixin, View,):
     template_name = 'usuario/admin/activar_cuentas.html'
     activo = 'on'
     login_url = reverse_lazy('usuario:iniciar_sesion')
-    permission_required = 'usuario.es_administrador'
 
     def get(self, request):
 
-        if request.user.has_perm(self.permission_required):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
 
             usuarios_inactivos = Usuario.objects.filter(activo=False)
 
@@ -182,28 +183,23 @@ class ActivacionCuentas(LoginRequiredMixin, View,):
             raise PermissionDenied
 
     def post(self, request):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            data = request.POST.items()
 
-        data = request.POST.items()
+            for email, switch in data:
+                if not email == 'csrfmiddlewaretoken':
+                    user = get_object_or_404(klass=User, username=email)
+                    usuario = get_object_or_404(klass=Usuario, user=user)
 
-        print data
+                    if switch == self.activo:
+                        usuario.activo = True
+                        usuario.save()
+                        enviar_email(user.username, usuario.nombre_completo())
 
-        for email, switch in data:
-            print email
-            print switch
-            try:
-                user = User.objects.get(username=email)
-                usuario = Usuario.objects.get(user=user)
-
-                if switch == self.activo:
-                    usuario.activo = True
-                    usuario.save()
-                    enviar_email(user.username, usuario.nombre_completo())
-
-            except ObjectDoesNotExist:
-                messages.error(request, u'Ocurrio un error al procesar la solicitud.')
-
-        messages.success(request, u'Las cuentas han sido activadas correctamente.')
-        return HttpResponseRedirect(reverse_lazy('usuario:admin_home'))
+            messages.success(request, u'Las cuentas han sido activadas correctamente.')
+            return HttpResponseRedirect(reverse_lazy('usuario:admin_home'))
+        else:
+            raise PermissionDenied
 
 
 class HomeAdmin(LoginRequiredMixin, View):
@@ -212,8 +208,10 @@ class HomeAdmin(LoginRequiredMixin, View):
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
     def get(self, request):
-
-        return render(request, self.template_name, {})
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            return render(request, self.template_name, {})
+        else:
+            raise PermissionDenied
 
 
 class HomeVendedor(LoginRequiredMixin, View):
@@ -222,10 +220,13 @@ class HomeVendedor(LoginRequiredMixin, View):
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
     def get(self, request):
-        return render(request, self.template_name, {})
+        if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+            return render(request, self.template_name, {})
+        else:
+            raise PermissionDenied
 
 
+@login_required(login_url=reverse_lazy('usuario:iniciar_sesion'))
 def cerrar_sesion(request):
     logout(request)
     return HttpResponseRedirect(reverse_lazy('usuario:iniciar_sesion'))
-

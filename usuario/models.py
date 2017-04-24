@@ -22,6 +22,9 @@ class Usuario(models.Model):
     ADMIN = 'administrador'
     VENDEDOR = 'vendedor'
 
+    PERMISO_ADMIN = 'usuario.es_administrador'
+    PERMISO_VENDEDOR = 'usuario.es_vendedor'
+
     user = models.OneToOneField(User, primary_key=True)
 
     nombres = models.CharField(
