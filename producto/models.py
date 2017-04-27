@@ -211,3 +211,7 @@ class DetalleFactura(models.Model):
         db_table = 'detalle_facturas'
         unique_together = (('factura', 'producto'))
 
+
+    def __unicode__(self):
+        return self.producto
+
