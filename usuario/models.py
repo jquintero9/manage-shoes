@@ -32,7 +32,7 @@ class Usuario(models.Model):
         validators=[
             RegexValidator(regex=regex['texto'], message=error_messages['texto'])
         ],
-        error_messages={'required': u'¿Cúal es tu nombre?'}
+        error_messages={'required': u'¿Cuál es tu nombre?'}
     )
 
     apellidos = models.CharField(
@@ -40,7 +40,7 @@ class Usuario(models.Model):
         validators=[
             RegexValidator(regex=regex['texto'], message=error_messages['texto'])
         ],
-        error_messages={'required': u'¿Cúal es tu apellido?'}
+        error_messages={'required': u'¿Cuál es tu apellido?'}
     )
 
     rol = models.CharField(
@@ -48,7 +48,7 @@ class Usuario(models.Model):
         validators=[
             RegexValidator(regex=regex['rol'], message=error_messages['rol'])
         ],
-        error_messages={'required': u'¿Cúal es el rol del usuario?'},
+        error_messages={'required': u'¿Cuál es el rol del usuario?'},
         choices=((ADMIN, 'Administrador'), (VENDEDOR, 'Vendedor'))
     )
 
@@ -79,7 +79,7 @@ class Departamento(models.Model):
         validators=[
             RegexValidator(regex=regex['texto'], message=error_messages['texto'])
         ],
-        error_messages={'required': u'¿Cúal es el nombre del Departamento?'},
+        error_messages={'required': u'¿Cuál es el nombre del Departamento?'},
         unique=True
     )
 
@@ -104,7 +104,7 @@ class Ciudad(models.Model):
         validators=[
             RegexValidator(regex=regex['texto'], message=error_messages['texto'])
         ],
-        error_messages={'required': u'¿Cúal es el nombre de la Ciudad?'}
+        error_messages={'required': u'¿Cuál es el nombre de la Ciudad?'}
     )
 
     departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
@@ -131,7 +131,7 @@ class Cliente(models.Model):
         validators=[
             RegexValidator(regex=regex['cedula'], message=error_messages['cedula'])
         ],
-        error_messages={'required': u'¿Cúal es el número de cédula?'},
+        error_messages={'required': u'¿Cuál es el número de cédula?'},
         unique=True
     )
 
@@ -140,7 +140,7 @@ class Cliente(models.Model):
         validators=[
             RegexValidator(regex=regex['texto'], message=error_messages['texto'])
         ],
-        error_messages={'required': u'¿Cúal es tu nombre?'}
+        error_messages={'required': u'¿Cuál es tu nombre?'}
     )
 
     apellidos = models.CharField(
@@ -148,7 +148,7 @@ class Cliente(models.Model):
         validators=[
             RegexValidator(regex=regex['texto'], message=error_messages['texto'])
         ],
-        error_messages={'required': u'¿Cúal es tu apellido?'}
+        error_messages={'required': u'¿Cuál es tu apellido?'}
     )
 
     ciudad = models.ForeignKey('Ciudad', on_delete=models.PROTECT)
@@ -166,7 +166,7 @@ class Cliente(models.Model):
         validators=[
             RegexValidator(regex=regex['telefono'], message=error_messages['telefono'])
         ],
-        error_messages={'required': u'¿Cúal es el télefono?'}
+        error_messages={'required': u'¿Cuál es el télefono?'}
     )
 
     class Meta:
