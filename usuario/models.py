@@ -178,3 +178,6 @@ class Cliente(models.Model):
     def __unicode__(self):
         return '%s - %s %s' % (self.cedula, self.nombres, self.apellidos)
 
+
+    def nombre_completo(self):
+        return '%s %s' % (self.nombres, self.apellidos)
