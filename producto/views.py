@@ -114,12 +114,10 @@ class ListaProducto(LoginRequiredMixin, View):
                 context['sin_resultado'] = True
 
             context['productos'] = productos
-            context['form'] = BusquedaForm()
-
-            return render(request, self.template_name, context)
         else:
-            context['form'] = self.form
             context['error_form'] = True
+
+        context['form'] = self.form
 
         return render(request, self.template_name, context)
 
