@@ -13,11 +13,11 @@ regex = {
     'telefono': r'([3]([0][0-5]|[1][0-9]|[2][0-2]|[5][01])[\d]{7})|([2-8][\d]{6,6})$',
     'password': r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&#\-_])[A-Za-z\d$@$!%*?&#\-_]{8,16}',
     'id_referencia': r'^[A-Za-z0-9]{6}$',
-    'nombre_producto': r'^[A-Za-z0-9]+$',
+    'nombre_producto': r'^[A-Za-z0-9\s]+$',
     'genero': r'^hombre|mujer|unisex$',
     'estilo': r'^deportivo|formal$',
-    'talla': r'^[27-43]$',
-    'numero': r'^d+$'
+    'talla': r'^2[7-9]|3[0-9]|4[0-3]$',
+    'numero': r'^[0-9]+$'
 }
 
 error_messages = {

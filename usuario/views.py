@@ -109,14 +109,27 @@ class InicioSesion(View):
         Procesa la petición HTTP por el método GET.
         Se instancia el formulario de inicio de sesión y se envía
         al template.
+        Si ya hay una sesión iniciada entonces se redirige al usuario a su vista correspondiente.
         :param request: Contiene la información de la petición HTTP.
         :return: La vista Registrar Vendedor.
         """
 
-        self.form_class = LoginForm()
-        context = {'form': self.form_class}
+        if not request.user.is_authenticated():
 
-        return render(request, self.template_name, context)
+            self.form_class = LoginForm()
+            context = {'form': self.form_class}
+
+            return render(request, self.template_name, context)
+        else:
+            try:
+                if request.session['rol'] == Usuario.ADMIN:
+                    redirect_url = reverse_lazy('usuario:admin_home')
+                elif request.session['rol'] == Usuario.VENDEDOR:
+                    redirect_url = reverse_lazy('usuario:vendedor_home')
+
+                return HttpResponseRedirect(redirect_url)
+            except KeyError:
+                return HttpResponseRedirect(reverse_lazy('usuario:iniciar_sesion'))
 
     def post(self, request):
 
@@ -144,6 +157,7 @@ class InicioSesion(View):
                 usuario = Usuario.objects.get(user=user)
                 if usuario.activo:
                     login(request, user=user)
+                    request.session['rol'] = usuario.rol
 
                     if user.has_perm(Usuario.PERMISO_ADMIN):
                         self.success_url = reverse_lazy('usuario:admin_home')

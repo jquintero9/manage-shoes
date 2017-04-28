@@ -1,0 +1,112 @@
+<div class="row">
+    <div class="input-field col s11 m4"> <!-- Input ID -->
+        {{ form.id_referencia }}
+        <label for="id_referencia">ID Referencia</label>
+        {% if form.id_referencia.errors %}
+        <div class="message-input">
+        {% for error in form.id_referencia.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input talla -->
+        {{ form.talla }}
+        <label for="">Talla</label>
+        {% if form.talla.errors %}
+        <div class="message-input">
+        {% for error in form.talla.errors %}
+            error
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input género -->
+        {{ form.genero}}
+        <label for="id_genero">Género</label>
+        {% if form.genero.errors %}
+        <div class="message-input">
+        {% for error in form.genero.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<div class="row">
+    <div class="input-field col s11 m4"> <!-- Input nombre-->
+        {{ form.nombre}}
+        <label for="id_nombre">Nombre</label>
+        {% if form.nombre.errors %}
+        <div class="message-input">
+        {% for error in form.nombre.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input marca -->
+        {{ form.marca}}
+        <label for="id_marca">Marca</label>
+        {% if form.marca.errors %}
+        <div class="message-input">
+        {% for error in form.marca.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input estilo -->
+        {{ form.estilo}}
+        <label for="id_estilo">Estilo</label>
+        {% if form.estilo.errors %}
+        <div class="message-input">
+        {% for error in form.estilo.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!--<div class="row">
+
+</div>
+<div class="row">
+
+</div>
+<div class="row">
+
+</div>
+<div class="row">
+
+</div>-->
+<div class="row">
+    <div class="input-field col s11 m4"> <!-- Input stock -->
+        {{ form.stock}}
+        <label for="id_stock">Stock</label>
+        {% if form.stock.errors %}
+        <div class="message-input">
+        {% for error in form.stock.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input precio -->
+        {{ form.precio}}
+        <label for="id_precio">Precio</label>
+        {% if form.precio.errors %}
+        <div class="message-input">
+        {% for error in form.precio.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!--
+<div class="row">
+
+</div>
+-->

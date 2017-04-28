@@ -35,4 +35,8 @@ a.link-form {
     text-decoration: underline;
 }
 
+div#producto-collapsible {
+    padding: 0;
+}
+
 

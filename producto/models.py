@@ -49,8 +49,8 @@ class Producto(models.Model):
     )
 
     ESTILO = (
-        ('deportivo', 'deportivo'),
-        ('formal', 'formal'),
+        ('deportivo', 'Deportivo'),
+        ('formal', 'Formal'),
     )
 
     TALLA = (
@@ -103,7 +103,8 @@ class Producto(models.Model):
         ],
         error_messages={
             'required': u'¿Cuál es el género?'
-        }
+        },
+        choices=GENERO
     )
 
     estilo = models.CharField(
@@ -113,7 +114,8 @@ class Producto(models.Model):
         ],
         error_messages={
             'required': u'¿Cuál es el estilo?'
-        }
+        },
+        choices=ESTILO
     )
 
     talla = models.CharField(
@@ -123,7 +125,8 @@ class Producto(models.Model):
         ],
         error_messages={
             'required': u'¿Cuál es la talla?'
-        }
+        },
+        choices=TALLA
     )
 
     stock = models.PositiveSmallIntegerField(
@@ -135,7 +138,7 @@ class Producto(models.Model):
         }
     )
 
-    precio = models.IntegerField(
+    precio = models.PositiveIntegerField(
         validators=[
             RegexValidator(regex=regex['numero'], message=error_messages['numero'])
         ],

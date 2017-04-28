@@ -9,10 +9,13 @@ from .views import (
     HomeVendedor,
 )
 
+from producto.views import CreacionProducto
+
 urlpatterns = [
     url(r'^$', InicioSesion.as_view(), name='iniciar_sesion'),
     url(r'^usuario/admin$', HomeAdmin.as_view(), name='admin_home'),
     url(r'^usuario/admin/activar-cuentas$', ActivacionCuentas.as_view(), name='activar_cuentas'),
+    url(r'^usuario/admin/producto/crear$', CreacionProducto.as_view(), name='crear_producto'),
     url(r'^usuario/vendedor$', HomeVendedor.as_view(), name='vendedor_home'),
     url(r'^cuentas/registrar$', RegistroVendedor.as_view(), name='registrar_vendedor'),
     url(r'^cuentas/registrar/success$',
