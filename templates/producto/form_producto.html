@@ -11,11 +11,11 @@
         {% endif %}
     </div>
     <div class="input-field col s11 m4"> <!-- Input talla -->
-        {{ form.talla }}
-        <label for="">Talla</label>
-        {% if form.talla.errors %}
+        {{ form.tallas }}
+        <label for="id_tallas">Talla</label>
+        {% if form.tallas.errors %}
         <div class="message-input">
-        {% for error in form.talla.errors %}
+        {% for error in form.tallas.errors %}
             error
             {{ error }}
         {% endfor %}

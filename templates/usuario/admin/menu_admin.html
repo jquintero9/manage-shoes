@@ -12,11 +12,17 @@
                 </div>
             </li>
             <li>
-                <div class="collapsible-header"><i class="material-icons">place</i>Productos</div>
+                <div class="collapsible-header"><i class="material-icons">shopping_cart</i>Productos</div>
                 <div id="producto-collapsible" class="collapsible-body">
                     <div class="collection">
                         <a href="{% url 'usuario:crear_producto' %}" class="collection-item">
-                            <i class="material-icons left">add</i>Crear</a>
+                            <i class="material-icons left">add</i>
+                            Crear
+                        </a>
+                        <a href="{% url 'usuario:listar_productos' %}" class="collection-item">
+                            Listar
+                            <i class="material-icons left">view_list</i>
+                        </a>
                     </div>
                 </div>
             </li>

@@ -12,16 +12,16 @@
 <body>
     {% block header %}
     <div class="navbar-fixed">
-        <nav class="blue darken-3">
+        <nav class="white">
             <div class="nav-wrapper">
-                <a href="#!" class="brand-logo">MANAGE SHOES</a>
+                <a href="#!" class="brand-logo blue-text text-darken-3">MANAGE SHOES</a>
                 <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                 <ul class="right hide-on-med-and-down">
                     {% if not user.is_authenticated %}
-                    <li><a href="{% url 'usuario:registrar_vendedor' %}">Registrar</a></li>
-                    <li><a href="{% url 'usuario:iniciar_sesion' %}">Iniciar Sesión</a></li>
+                    <li><a class="blue-text text-darken-3" href="{% url 'usuario:registrar_vendedor' %}">Registrar</a></li>
+                    <li><a class="blue-text text-darken-3" href="{% url 'usuario:iniciar_sesion' %}">Iniciar Sesión</a></li>
                     {% else %}
-                    <li><a href="{% url 'usuario:cerrar_sesion' %}">Salir</a></li>
+                    <li><a class="blue-text text-darken-3" href="{% url 'usuario:cerrar_sesion' %}">Salir</a></li>
                     {% endif %}
                 </ul>
                 <ul class="side-nav" id="mobile-demo">
@@ -32,11 +32,14 @@
     </div>
     {% endblock %}
 
+    <div id="contenido">
     {% block content %}
+
     {% endblock %}
+    </div>
 
     {% block footer %}
-    <footer class="page-footer blue darken-4">
+    <footer id="pagina-footer" class="page-footer blue darken-4">
           <div class="container">
             <div class="row">
               <div class="col l6 s12">

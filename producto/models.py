@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.core.validators import RegexValidator
+from django.urls import reverse_lazy
 from usuario.utils import regex, error_messages
 from usuario.models import Cliente, Usuario
 
@@ -36,6 +37,30 @@ class Marca(models.Model):
         return self.nombre
 
 
+class Talla(models.Model):
+
+    """
+    Representa el Rango de tallas de los los zapatos.
+    """
+
+    numero = models.CharField(
+        max_length=2,
+        validators=[
+            RegexValidator(regex=regex['talla'], message=error_messages['talla'])
+        ],
+        error_messages={
+            'required': u'¿Cuál es el número de talla?'
+        },
+        unique=True
+    )
+
+    class Meta:
+        db_table = 'tallas'
+
+    def __unicode__(self):
+        return self.numero
+
+
 class Producto(models.Model):
 
     """
@@ -51,26 +76,6 @@ class Producto(models.Model):
     ESTILO = (
         ('deportivo', 'Deportivo'),
         ('formal', 'Formal'),
-    )
-
-    TALLA = (
-        ('27', '27'),
-        ('28', '28'),
-        ('29', '29'),
-        ('30', '30'),
-        ('31', '31'),
-        ('32', '32'),
-        ('33', '33'),
-        ('34', '34'),
-        ('35', '35'),
-        ('36', '36'),
-        ('37', '37'),
-        ('38', '38'),
-        ('39', '39'),
-        ('40', '40'),
-        ('41', '41'),
-        ('42', '42'),
-        ('43', '43'),
     )
 
     id_referencia = models.CharField(
@@ -118,16 +123,7 @@ class Producto(models.Model):
         choices=ESTILO
     )
 
-    talla = models.CharField(
-        max_length=2,
-        validators=[
-            RegexValidator(regex=regex['talla'], message=error_messages['talla'])
-        ],
-        error_messages={
-            'required': u'¿Cuál es la talla?'
-        },
-        choices=TALLA
-    )
+    tallas = models.ManyToManyField('Talla', related_name='talla_producto', db_table='tallas_producto')
 
     stock = models.PositiveSmallIntegerField(
         validators=[
@@ -155,6 +151,12 @@ class Producto(models.Model):
 
     def __unicode__(self):
         return self.nombre
+
+    def get_absolute_url_update(self):
+        return reverse_lazy('usuario:actualizar_producto', kwargs={'pk': self.id})
+
+    def get_absolute_url_delete(self):
+        return reverse_lazy('usuario:eliminar_producto', kwargs={'pk': self.id})
 
 
 class Factura(models.Model):
@@ -212,8 +214,7 @@ class DetalleFactura(models.Model):
 
     class Meta:
         db_table = 'detalle_facturas'
-        unique_together = (('factura', 'producto'))
-
+        unique_together = (('factura', 'producto'),)
 
     def __unicode__(self):
         return self.producto

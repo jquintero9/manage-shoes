@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de productos - {{ user }}{% endblock %}
+
+{% block content %}
+{% include 'mensajes.html' %}
+<div class="row">
+    {% include 'usuario/admin/menu_admin.html' %}
+    <div class="col s12 m9">
+        <h3 class="center blue-text text-darken-4">Lista de productos</h3>
+        <div class="row"> <!-- Contenedor para mostrar mensajes -->
+            {% if vacio %}
+            <div class="message-input"><span>La lista de productos está vacía.</span></div>
+            {% endif %}
+            {% if sin_resultado %}
+            <div class="message-input"><span>No se obtuvieron resultados.</span></div>
+            {% endif %}
+            {% if error_form %}
+                {% if form.busqueda.errors %}
+                <div class="message-input">
+                {% for error in form.busqueda.errors %}
+                    error
+                    {{ error }}
+                {% endfor %}
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="row"> <!-- Barra de búsqueda -->
+            <nav class="blue darken-1">
+                <div class="nav-wrapper">
+                    <form action="" method="POST"> {% csrf_token %}
+                        <div class="input-field">
+                        {{ form.busqueda }}
+                        <label class="label-icon" for="id_busqueda"><i class="material-icons">search</i></label>
+                        <i class="material-icons">close</i>
+                        </div>
+                    </form>
+                </div>
+            </nav>
+        </div>
+        <div class="row"> <!-- Lista de productos -->
+            <table class="responsive-table striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Marca</th>
+                        <th>Nombre</th>
+                        <th>Talla(s)</th>
+                        <th>Género</th>
+                        <th>Estilo</th>
+                        <th>Stock</th>
+                        <th>Precio</th>
+                        {% if rol == 'administrador' %}
+                        <th class="center">Acciones</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% if productos %}
+                    {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.id_referencia }}</td>
+                        <td>{{ producto.marca }}</td>
+                        <td>{{ producto.nombre }}</td>
+                        <td>
+                        {% for talla in producto.tallas.all %}
+                        {{ talla }}
+                        {% endfor %}
+                        </td>
+                        <td>{{ producto.genero }}</td>
+                        <td>{{ producto.estilo }}</td>
+                        <td>{{ producto.stock }}</td>
+                        <td>${{ producto.precio }}</td>
+                        {% if rol == 'administrador' %}
+                        <td>
+                            <a class="waves-effect waves-light btn blue darken-3" title="Editar" href="{{ producto.get_absolute_url_update }}">
+                                <i class="material-icons">mode_edit</i>
+                            </a>
+                            <a class="waves-effect waves-light btn red darken-4" title="Eliminar" href="#modal-eliminar-{{ producto.id }}">
+                                <i class="material-icons">delete</i>
+                            </a>
+                            <!-- Modal Structure -->
+                            <div id="modal-eliminar-{{ producto.id }}" class="modal">
+                                <form action="{{ producto.get_absolute_url_delete }}" method="POST"> {% csrf_token %}
+                                    <div class="modal-content">
+                                        <h4>¿Está seguro que desea eliminar el producto {{ producto.nombre }}?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                         <button class="btn waves-effect waves-light red darken-4" type="submit">Si, eliminar
+                                            <i class="material-icons right">warning</i>
+                                         </button>
+                                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn blue accent-2">Cancelar</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

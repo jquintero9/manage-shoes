@@ -1,16 +1,25 @@
+#!usr/local/bin
+# coding: latin-1
+
 from django.shortcuts import render
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
+from django.contrib import messages
 from .models import Producto
 from usuario.models import Usuario
-from .forms import ProductoForm
+from .forms import ProductoForm, BusquedaForm
 
 # Create your views here.
 
 
 class CreacionProducto(LoginRequiredMixin, CreateView):
+
+    """
+    Crea un nuevo producto.
+    """
 
     model = Producto
     form_class = ProductoForm
@@ -19,12 +28,144 @@ class CreacionProducto(LoginRequiredMixin, CreateView):
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
     def get(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN):
             return super(CreacionProducto, self).get(request, *args, **kwargs)
         else:
             raise PermissionDenied
 
     def post(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN):
             return super(CreacionProducto, self).post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
+
+class ListaProducto(LoginRequiredMixin, View):
+
+    """
+    Obtiene una lista con todos los productos del inventario.
+    """
+
+    form = None
+    template_name = 'producto/lista_productos.html'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+    rol = None
+
+    def get(self, request):
+        """
+        Se envía al template una variable rol con el rol del usuario, para verificar si el
+        usuario puede gestionar(editar y eliminar) los productos de la lista.
+
+        Se obtinen una lista con todos los productos del inventario.
+        Se crea una variable 'vacio' la cual determina si la lista de prouctos
+        está vacía, para mostrar el respectivo mensaje en el template.
+        """
+
+        try:
+            self.rol = request.session['rol']
+        except KeyError:
+            raise PermissionDenied
+
+        productos = Producto.objects.all()
+        vacio = True if len(productos) == 0 else False
+
+        context = {
+            'productos': productos,
+            'form': BusquedaForm(),
+            'rol': self.rol,
+            'vacio': vacio
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        """
+        Se obtiene el rol del usuario para detenmiar si este puede gestionar (editar y eliminar)
+        los productos del inventario.
+        Se válida la búsqueda del usuario, si es válida se realiza la consulta a la base de datos y se
+        verifica que si hubieron resultados. Si búsqueda no es válida se envía el formulario con el
+        correspondiente mensaje de error.
+        """
+
+        try:
+            self.rol = request.session['rol']
+        except KeyError:
+            raise PermissionDenied
+
+        self.form = BusquedaForm(data=request.POST)
+        context = {'rol': self.rol}
+
+        if self.form.is_valid():
+            id_referencia = self.form.cleaned_data.get('busqueda')
+            productos = Producto.objects.filter(id_referencia=id_referencia)
+            sin_resultado = True if len(productos) == 0 else False
+
+            if sin_resultado:
+                context['sin_resultado'] = True
+
+            context['productos'] = productos
+            context['form'] = BusquedaForm()
+
+            return render(request, self.template_name, context)
+        else:
+            context['form'] = self.form
+            context['error_form'] = True
+
+        return render(request, self.template_name, context)
+
+
+class ActualizacionProducto(LoginRequiredMixin, UpdateView):
+
+    """
+    Actuailza los datos de un producto.
+    """
+
+    model = Producto
+    template_name = 'producto/actualizar_producto.html'
+    form_class = ProductoForm
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+    success_url = reverse_lazy('usuario:admin_home')
+
+    def get(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            return super(ActualizacionProducto, self).get(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    def post(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            return super(ActualizacionProducto, self).post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+
+class EliminacionProducto(LoginRequiredMixin, DeleteView):
+
+    model = Producto
+    success_url = reverse_lazy('usuario:listar_productos')
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+
+    def post(self, request, *args, **kwargs):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            return super(EliminacionProducto, self).post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied

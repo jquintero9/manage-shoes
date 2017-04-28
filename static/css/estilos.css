@@ -39,4 +39,6 @@ div#producto-collapsible {
     padding: 0;
 }
 
+div#contenido { min-height: 680px; }
+
 
