@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -125,6 +126,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+"""
+Los usuarios que no están autenticados y traten de acceder al sistema,
+serán redireccionados a está url.
+"""
+LOGIN_REDIRECT_URL = reverse_lazy('usuario:iniciar_sesion')
 
 """
 Configuración para el envío de e-mails desde la aplicación hacia los

@@ -35,10 +35,20 @@ a.link-form {
     text-decoration: underline;
 }
 
-div#producto-collapsible {
+div#producto-collapsible,
+div#cuentas-collapsible,
+div#cliente-collapsible {
     padding: 0;
 }
 
 div#contenido { min-height: 680px; }
+
+div#menu-vertical {
+    padding: 0;
+}
+
+ul#lista-menu-vertical {
+    margin-top: 0;
+}
 
 

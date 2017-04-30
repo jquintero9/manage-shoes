@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from .utils import regex, error_messages
@@ -163,9 +164,6 @@ class Cliente(models.Model):
 
     telefono = models.CharField(
         max_length=10,
-        validators=[
-            RegexValidator(regex=regex['telefono'], message=error_messages['telefono'])
-        ],
         error_messages={'required': u'¿Cuál es el télefono?'}
     )
 
@@ -178,6 +176,11 @@ class Cliente(models.Model):
     def __unicode__(self):
         return '%s - %s %s' % (self.cedula, self.nombres, self.apellidos)
 
-
     def nombre_completo(self):
         return '%s %s' % (self.nombres, self.apellidos)
+
+    def get_absolute_url_edit(self):
+        return reverse_lazy('usuario:actualizar_cliente', kwargs={'pk': self.id})
+
+    def get_absolute_url_delete(self):
+        return reverse_lazy('usuario:eliminar_cliente', kwargs={'pk': self.id})

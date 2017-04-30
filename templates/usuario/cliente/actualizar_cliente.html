@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar Producto - {{ user }}{% endblock %}
+{% block title %}Editar Cliente - {{ user }}{% endblock %}
 
 {% block content %}
 {% include 'mensajes.html' %}
@@ -12,14 +12,17 @@
         <form id="form-center" class="z-depth-4 col s12 m9" action="" method="POST"> {% csrf_token %}
             <h3 class="center blue-text text-darken-3 ">
                 <i class="material-icons center medium">mode_edit</i>
-                Editar Producto
+                Editar Cliente
             </h3>
-             {% include 'producto/form_producto.html' %}
+             {% include 'usuario/cliente/form_cliente.html' %}
             <div id="last-row" class="row">
-                <div class="input-field col s12 m7"> <!-- Botón Submit -->
-                    <button class="btn waves-effect waves-light" type="submit">Editar
+                <div class="input-field col s12"> <!-- Botón Submit -->
+                    <button class="btn waves-effect waves-light blue darken-1" type="submit">Editar
                         <i class="material-icons right">send</i>
                     </button>
+                    <a class="btn waves-effect waves-light red darken-1" href="{% url 'usuario:listar_clientes' %}">Cancelar
+                        <i class="material-icons left">error</i>
+                    </a>
                 </div>
             </div>
         </form>

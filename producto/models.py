@@ -36,6 +36,16 @@ class Marca(models.Model):
     def __unicode__(self):
         return self.nombre
 
+    @staticmethod
+    def get_choices():
+        marcas = Marca.objects.all()
+        choices = [('', 'Selecciona una marca')]
+
+        for marca in marcas:
+            choices.append((marca.id, marca.nombre))
+
+        return choices
+
 
 class Talla(models.Model):
 
@@ -157,6 +167,7 @@ class Producto(models.Model):
 
     def get_absolute_url_delete(self):
         return reverse_lazy('usuario:eliminar_producto', kwargs={'pk': self.id})
+
 
 
 class Factura(models.Model):

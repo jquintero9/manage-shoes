@@ -1,8 +1,9 @@
 #!usr/local/bin
 # coding: latin-1
 
+import re
 from django import forms
-from .models import Usuario
+from .models import Usuario, Cliente, Departamento
 from django.core.validators import EmailValidator, RegexValidator
 from .utils import regex, error_messages
 
@@ -94,4 +95,35 @@ class LoginForm(forms.Form):
     password = forms.CharField(
         max_length=16,
         widget=forms.PasswordInput()
+    )
+
+
+class DepartamentoForm(forms.ModelForm):
+
+    class Meta:
+        model = Departamento
+        fields = '__all__'
+
+
+class ClienteForm(forms.ModelForm):
+
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+
+        if re.match(regex['telefono'], telefono) is None:
+            raise forms.ValidationError(message=error_messages['telefono'])
+
+        return telefono
+
+
+class BusquedaClienteForm(forms.Form):
+
+    busqueda = forms.CharField(
+        max_length=10,
+        widget=forms.TextInput(attrs={'type': 'search', 'placeholder': u'Buscar por cédula'}),
+        validators=[RegexValidator(regex=regex['cedula'], message=error_messages['cedula'])]
     )

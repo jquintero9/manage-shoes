@@ -1,34 +1,48 @@
-<div class="col s12 m3">
-        <ul class="collapsible" data-collapsible="accordion">
-            <li>
-                <div class="collapsible-header"><i class="material-icons">supervisor_account</i>Cuentas</div>
-                <div class="collapsible-body">
-                    <!--<ul>
-                        <li><a href="{% url 'usuario:activar_cuentas' %}">Activar cuentas</a></li>
-                    </ul>-->
-                    <div class="collection">
-                        <a href="{% url 'usuario:activar_cuentas' %}" class="collection-item">Activar cuentas</a>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <div class="collapsible-header"><i class="material-icons">shopping_cart</i>Productos</div>
-                <div id="producto-collapsible" class="collapsible-body">
-                    <div class="collection">
-                        <a href="{% url 'usuario:crear_producto' %}" class="collection-item">
-                            <i class="material-icons left">add</i>
-                            Crear
-                        </a>
-                        <a href="{% url 'usuario:listar_productos' %}" class="collection-item">
-                            Listar
-                            <i class="material-icons left">view_list</i>
-                        </a>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <div class="collapsible-header"><i class="material-icons">whatshot</i>Third</div>
-                <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-            </li>
-        </ul>
-    </div>
+
+<ul id="lista-menu-vertical" class="collapsible blue darken-3" data-collapsible="accordion">
+    <li>
+        <div class="collapsible-header"><i class="material-icons">supervisor_account</i>Cuentas</div>
+        <div id="cuentas-collapsible" class="collapsible-body">
+            <!--<ul>
+                <li><a href="{% url 'usuario:activar_cuentas' %}">Activar cuentas</a></li>
+            </ul>-->
+            <div class="collection">
+                <a href="{% url 'usuario:activar_cuentas' %}" class="collection-item">
+                    Activar cuentas
+                    <i class="material-icons left">verified_user</i>
+                </a>
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header"><i class="material-icons">shopping_cart</i>Productos</div>
+        <div id="producto-collapsible" class="collapsible-body">
+            <div class="collection">
+                <a href="{% url 'usuario:crear_producto' %}" class="collection-item">
+                    <i class="material-icons left">add</i>
+                    Crear
+                </a>
+                <a href="{% url 'usuario:listar_productos' %}" class="collection-item">
+                    Listar
+                    <i class="material-icons left">view_list</i>
+                </a>
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header"><i class="material-icons">assignment_ind</i>Clientes</div>
+        <div id="cliente-collapsible" class="collapsible-body">
+            <div class="collection">
+                <a href="{% url 'usuario:registrar_cliente' %}" class="collection-item">
+                    <i class="material-icons left">add</i>
+                    Crear
+                </a>
+                <a href="{% url 'usuario:listar_clientes' %}" class="collection-item">
+                    <i class="material-icons left">view_list</i>
+                    Listar
+                </a>
+            </div>
+        </div>
+    </li>
+</ul>
+

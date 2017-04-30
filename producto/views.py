@@ -1,16 +1,19 @@
 #!usr/local/bin
 # coding: latin-1
 
+import re
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from .models import Producto
+from .models import Producto, Marca
 from usuario.models import Usuario
-from .forms import ProductoForm, BusquedaForm
+from usuario.utils import regex, error_messages
+from .forms import ProductoForm, BusquedaForm, FiltroProductoForm
 
 # Create your views here.
 
@@ -56,10 +59,16 @@ class ListaProducto(LoginRequiredMixin, View):
     Obtiene una lista con todos los productos del inventario.
     """
 
-    form = None
+    MARCA = 'marca'
+    ESTILO = 'estilo'
+    GENERO = 'genero'
+
+    form = BusquedaForm()
     template_name = 'producto/lista_productos.html'
     login_url = reverse_lazy('usuario:iniciar_sesion')
-    rol = None
+    rol = tipo_busqueda = filtro = id_filtro = None
+    busqueda_filtrada = False
+    marcas = Marca.objects.all()
 
     def get(self, request):
         """
@@ -76,15 +85,39 @@ class ListaProducto(LoginRequiredMixin, View):
         except KeyError:
             raise PermissionDenied
 
-        productos = Producto.objects.all()
-        vacio = True if len(productos) == 0 else False
+        context = {'form': self.form, 'marcas': self.marcas, 'rol': self.rol}
 
-        context = {
-            'productos': productos,
-            'form': BusquedaForm(),
-            'rol': self.rol,
-            'vacio': vacio
-        }
+        try:
+            self.filtro = request.GET['filtro']
+            self.id_filtro = request.GET['id']
+            self.busqueda_filtrada = True
+        except KeyError:
+            pass
+
+        productos = None
+
+        if self.busqueda_filtrada:
+            if self.filtro == ListaProducto.MARCA:
+                if re.match(regex['numero'], self.id_filtro):
+                    productos = Producto.objects.filter(marca=self.id_filtro)
+            elif self.filtro == ListaProducto.ESTILO:
+                if re.match(regex['estilo'], self.id_filtro):
+                    productos = Producto.objects.filter(estilo=self.id_filtro)
+                    print productos
+            elif self.filtro == ListaProducto.GENERO:
+                if re.match(regex['genero'], self.id_filtro):
+                    productos = Producto.objects.filter(genero=self.id_filtro)
+
+            if productos is not None:
+                context['resultados'] = len(productos)
+            else:
+                context['error_busqueda'] = u'El filtro de búsqueda no es válido.'
+        else:
+            productos = Producto.objects.all()
+            vacio = True if len(productos) == 0 else False
+            context['vacio'] = vacio
+
+        context['productos'] = productos
 
         return render(request, self.template_name, context)
 
@@ -102,17 +135,13 @@ class ListaProducto(LoginRequiredMixin, View):
         except KeyError:
             raise PermissionDenied
 
+        context = {'marcas': self.marcas, 'rol': self.rol}
         self.form = BusquedaForm(data=request.POST)
-        context = {'rol': self.rol}
 
         if self.form.is_valid():
             id_referencia = self.form.cleaned_data.get('busqueda')
             productos = Producto.objects.filter(id_referencia=id_referencia)
-            sin_resultado = True if len(productos) == 0 else False
-
-            if sin_resultado:
-                context['sin_resultado'] = True
-
+            context['resultados'] = len(productos)
             context['productos'] = productos
         else:
             context['error_form'] = True

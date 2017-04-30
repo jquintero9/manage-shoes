@@ -8,9 +8,9 @@ from django.conf import settings
 regex = {
     'texto': r'^[A-Za-záéíóúÁÉÍÓÚ\s]+$',
     'rol': r'^(administrador|vendedor)$',
-    'cedula': r'^[0-9]+{10,10}$',
-    'direccion': r'^[a-zA-Z0-9#\-\s]$',
-    'telefono': r'([3]([0][0-5]|[1][0-9]|[2][0-2]|[5][01])[\d]{7})|([2-8][\d]{6,6})$',
+    'cedula': r'^[0-9]{10}$',
+    'direccion': r'^[a-zA-Z0-9#\-\s]+$',
+    'telefono': r'^([3]([0][0-5]|[1][0-9]|[2][0-2]|[5][01])[0-9]{7})|([2-8][0-9]{6})$',
     'password': r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&#\-_])[A-Za-z\d$@$!%*?&#\-_]{8,16}',
     'id_referencia': r'^[A-Za-z0-9]{6}$',
     'nombre_producto': r'^[A-Za-z0-9\s]+$',
@@ -23,9 +23,9 @@ regex = {
 error_messages = {
     'texto': u'Ingrese solo letras.',
     'rol': u'El rol no es válido',
-    'cedula': u'Solo se admiten números.',
+    'cedula': u'Número de cédula no válido.',
     'direccion': u'El formato de la dirección no es válido.',
-    'telefono': u'El número ingresado no es válido.',
+    'telefono': u'El número de teléfono no es válido.',
     'password': u'La contraseña debe tener máximo un caracter especial($@$!%*?&), '
                 u'una minuscúla, una mayuscúla y un dígito.',
     'id_referencia': u'El formato del ID no es válido',

@@ -4,15 +4,24 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import View
+from django.views import View
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import ListView
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from .forms import UserForm, UsuarioForm, LoginForm
-from .models import Usuario
+from .forms import (
+    UserForm,
+    UsuarioForm,
+    LoginForm,
+    ClienteForm,
+    DepartamentoForm,
+    BusquedaClienteForm
+)
+from .models import Usuario, Cliente
 from .utils import enviar_email
 
 
@@ -91,6 +100,118 @@ class RegistroVendedor(View):
             }
 
             return render(request, self.template_name, context)
+
+
+class RegistroCliente(LoginRequiredMixin, CreateView):
+
+    model = Cliente
+    template_name = 'usuario/cliente/crear_cliente.html'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+    form_class = ClienteForm
+
+    def get_context_data(self, **kwargs):
+        context = super(RegistroCliente, self).get_context_data(**kwargs)
+        context['form_departamento'] = DepartamentoForm()
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+                request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+            return super(RegistroCliente, self).get(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    def post(self, request, *args, **kwargs):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+                request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+
+            try:
+                if request.session['rol'] == Usuario.ADMIN:
+                    self.success_url = reverse_lazy('usuario:admin_home')
+                elif request.session['rol'] == Usuario.VENDEDOR:
+                    self.success_url = reverse_lazy('')
+            except KeyError:
+                pass
+
+            return super(RegistroCliente, self).post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+
+class ListaCliente(LoginRequiredMixin, View):
+
+    template_name = 'usuario/cliente/lista_clientes.html'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+
+    def get(self, request):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+                request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+            context = {'clientes': Cliente.objects.all(), 'form': BusquedaClienteForm()}
+            return render(request, self.template_name, context)
+        else:
+            raise PermissionDenied
+
+    def post(self, request):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+                request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+            form = BusquedaClienteForm(data=request.POST)
+            context = {'form': form}
+
+            if form.is_valid():
+                cedula = form.cleaned_data.get('busqueda')
+                clientes = Cliente.objects.filter(cedula=cedula)
+                context['clientes'] = clientes
+                context['resultado'] = len(clientes)
+
+            return render(request, self.template_name, context)
+        else:
+            raise PermissionDenied
+
+
+class ActualizacionCliente(LoginRequiredMixin, UpdateView):
+
+    model = Cliente
+    template_name = 'usuario/cliente/actualizar_cliente.html'
+    form_class = ClienteForm
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+
+    def get(self, request, *args, **kwargs):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+                request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+
+            return super(ActualizacionCliente, self).get(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    def post(self, request, *args, **kwargs):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+                request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+
+            try:
+                if request.session['rol'] == Usuario.ADMIN:
+                    self.success_url = reverse_lazy('usuario:admin_home')
+                elif request.session['rol'] == Usuario.VENDEDOR:
+                    self.success_url = reverse_lazy('')
+            except KeyError:
+                pass
+
+            return super(ActualizacionCliente, self).post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+
+class EliminacionCliente(LoginRequiredMixin, DeleteView):
+
+    model = Cliente
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+    success_url = reverse_lazy('usuario:listar_clientes')
+
+    def post(self, request, *args, **kwargs):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            return super(EliminacionCliente, self).post(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
 
 class InicioSesion(View):

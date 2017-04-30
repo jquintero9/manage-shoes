@@ -1,0 +1,81 @@
+<div class="row">
+    <div class="input-field col s11 m4"> <!-- Input Cédula -->
+        <i class="material-icons prefix">credit_card</i>
+        {{ form.cedula }}
+        <label for="id_cedula">Cédula</label>
+        {% if form.cedula.errors %}
+        <div class="message-input">
+            <i class="material-icons left">error</i>
+        {% for error in form.cedula.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input Nombres -->
+        <i class="material-icons prefix">account_circle</i>
+        {{ form.nombres }}
+        <label for="id_nombres">Nombres</label>
+        {% if form.nombres.errors %}
+        <div class="message-input">
+            <i class="material-icons left">error</i>
+        {% for error in form.nombres.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input Apellidos -->
+        <i class="material-icons prefix">account_circle</i>
+        {{ form.apellidos}}
+        <label for="id_apellidos">Apellidos</label>
+        {% if form.apellidos.errors %}
+        <div class="message-input">
+            <i class="material-icons left">error</i>
+        {% for error in form.apellidos.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<div class="row">
+    <div class="input-field col s11 m4"> <!-- Input Ciudad-->
+        {{ form.ciudad}}
+        <label for="id_ciudad">Ciudad</label>
+        {% if form.ciudad.errors %}
+        <div class="message-input">
+            <i class="material-icons left">error</i>
+        {% for error in form.ciudad.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input Dirección-->
+        <i class="material-icons prefix">location_on</i>
+        {{ form.direccion }}
+        <label for="id_direccion">Dirección</label>
+        {% if form.direccion.errors %}
+        <div class="message-input">
+            <i class="material-icons left">error</i>
+        {% for error in form.direccion.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="input-field col s11 m4"> <!-- Input Teléfono-->
+        <i class="material-icons prefix">phone</i>
+        {{ form.telefono}}
+        <label for="id_telefono">Teléfono</label>
+        {% if form.telefono.errors %}
+        <div class="message-input">
+            <i class="material-icons left">error</i>
+        {% for error in form.telefono.errors %}
+            {{ error }}
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>

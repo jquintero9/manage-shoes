@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar Producto - {{ user }}{% endblock %}
+{% block title %}Crear Cliente - {{ user }}{% endblock %}
 
 {% block content %}
 {% include 'mensajes.html' %}
 <div class="row">
-    <div class="col s12 m3">
+    <div id="menu-vertical" class="col s12 m3">
     {% include 'usuario/admin/menu_admin.html' %}
     </div>
     <div class="col s12 m9">
         <form id="form-center" class="z-depth-4 col s12 m9" action="" method="POST"> {% csrf_token %}
             <h3 class="center blue-text text-darken-3 ">
-                <i class="material-icons center medium">mode_edit</i>
-                Editar Producto
+                <i class="material-icons center medium">note_add</i>
+                Crear Cliente
             </h3>
-             {% include 'producto/form_producto.html' %}
+             {% include 'usuario/cliente/form_cliente.html' %}
             <div id="last-row" class="row">
                 <div class="input-field col s12 m7"> <!-- Botón Submit -->
-                    <button class="btn waves-effect waves-light" type="submit">Editar
+                    <button class="btn waves-effect waves-light" type="submit">Crear
                         <i class="material-icons right">send</i>
                     </button>
                 </div>
@@ -25,7 +25,4 @@
         </form>
     </div>
 </div>
-{% endblock %}
-
-{% block footer %}
 {% endblock %}
