@@ -2,81 +2,114 @@
 
 {% block title %}Lista de Clientes- {{ user }}{% endblock %}
 
-{% block content %}
+{% block panelusuario %}
+{% include 'usuario/admin/panel_admin.html' %}
+{% endblock %}
+
+{% block menuopciones %}
+{% include 'usuario/admin/menu_admin.html' %}
+{% endblock %}
+
+{% block breadcrumb %}
+<a class="breadcrumb">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">Clientes</a>
+<a class="breadcrumb">Lista de Clientes</a>
+{% endblock %}
+
+{% block barrabusqueda %}
+{% include 'barra_busqueda.html' %}
+{% endblock %}
+
+{% block contenido %}
 {% include 'mensajes.html' %}
-<div class="row">
-    <div id="menu-vertical" class="col s12 m3">
-    {% include 'usuario/admin/menu_admin.html' %}
+<div class="row"> <!-- Contenedor para mostrar mensajes -->
+    {% if resultado >= 0 %}
+    <div class="message-input">
+        <i class="material-icons left">offline_pin</i>
+        <span>Se ha encontrado <b>({{ resultado }})</b> cliente(s).</span>
     </div>
-    <div class="col s12 m9">
-        <h4 class="center blue-text text-darken-4">Clientes</h4>
-        <div class="row"> <!-- Contenedor para mostrar mensajes -->
-            {% if resultado >= 0 %}
-            <div class="message-input">
-                <i class="material-icons left">offline_pin</i>
-                <span>Se ha encontrado <b>({{ resultado }})</b> cliente(s).</span>
-            </div>
-            {% elif form.busqueda.errors %}
-            <div class="message-input">
-                <i class="material-icons left">error</i>
-                {% for error in form.busqueda.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        {% include 'barra_busqueda.html' %}
-        <div class="row"> <!-- Lista de productos -->
-            <table class="responsive-table striped">
-                <thead>
-                    <tr>
-                        <th>Cédula</th>
-                        <th>Nombres</th>
-                        <th>Apellidos</th>
-                        <th>Ciudad</th>
-                        <th>Dirección</th>
-                        <th>Teléfono</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% if clientes %}
-                    {% for cliente in clientes %}
-                    <tr>
-                        <td>{{ cliente.cedula }}</td>
-                        <td>{{ cliente.nombres }}</td>
-                        <td>{{ cliente.apellidos }}</td>
-                        <td>{{ cliente.ciudad }}</td>
-                        <td>{{ cliente.direccion}}</td>
-                        <td>{{ cliente.telefono }}</td>
-                        <td>
-                            <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{{ cliente.get_absolute_url_edit }}">
-                                <i class="material-icons">mode_edit</i>
-                            </a>
-                            <a class="waves-effect waves-light btn red darken-1" title="Eliminar" href="#modal-eliminar-{{ cliente.id }}">
-                                <i class="material-icons">delete</i>
-                            </a>
-                            <!-- Modal Structure -->
-                            <div id="modal-eliminar-{{ cliente.id }}" class="modal">
-                                <form action="{{ cliente.get_absolute_url_delete }}" method="POST"> {% csrf_token %}
-                                    <div class="modal-content">
-                                        <h4>¿Está seguro que desea eliminar el cliente {{ cliente.nombre_completo }}?</h4>
-                                    </div>
-                                    <div class="modal-footer">
-                                         <button class="btn waves-effect waves-light red darken-4" type="submit">Si, eliminar
-                                            <i class="material-icons right">warning</i>
-                                         </button>
-                                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn blue accent-2">Cancelar</a>
-                                    </div>
-                                </form>
+    {% elif form.busqueda.errors %}
+    <div class="message-input">
+        <i class="material-icons left">error</i>
+        {% for error in form.busqueda.errors %}
+        <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+<div class="row"> <!-- Lista de productos -->
+    <table class="responsive-table striped">
+        <thead>
+            <tr>
+                <th>Cédula</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Ciudad</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if clientes %}
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.cedula }}</td>
+                <td>{{ cliente.nombres }}</td>
+                <td>{{ cliente.apellidos }}</td>
+                <td>{{ cliente.ciudad }}</td>
+                <td>{{ cliente.direccion}}</td>
+                <td>{{ cliente.telefono }}</td>
+                <td>
+                    <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{{ cliente.get_absolute_url_edit }}">
+                        <i class="material-icons">mode_edit</i>
+                    </a>
+                    <a class="waves-effect waves-light btn red darken-1" title="Eliminar" href="#modal-eliminar-{{ cliente.id }}">
+                        <i class="material-icons">delete</i>
+                    </a>
+                    <!-- Modal Structure -->
+                    <div id="modal-eliminar-{{ cliente.id }}" class="modal">
+                        <form action="{{ cliente.get_absolute_url_delete }}" method="POST"> {% csrf_token %}
+                            <div class="modal-content">
+                                <h4>¿Está seguro que desea eliminar el cliente {{ cliente.nombre_completo }}?</h4>
                             </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% endif %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+                            <div class="modal-footer">
+                                 <button class="btn waves-effect waves-light red darken-4" type="submit">Si, eliminar
+                                    <i class="material-icons right">warning</i>
+                                 </button>
+                                <a href="#!" class="modal-action modal-close waves-effect waves-green btn blue accent-2">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <ul class="pagination">
+        {% if clientes.has_previous %}
+        <li><a href="?page={{ clientes.previous_page_number }}"><i class="material-icons">chevron_left</i></a></li>
+        {% else %}
+        <li class="disabled"><a><i class="material-icons">chevron_left</i></a></li>
+        {% endif %}
+        {% for i in numero_paginas %}
+        {% if i == clientes.number %}
+        <li class="active blue darken-1"><a>{{ i }}</a></li>
+        {% else %}
+        <li class="waves-effect"><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if productos.has_next %}
+        <li class="waves-effect"><a href="?page={{ clientes.next_page_number }}"><i class="material-icons">chevron_right</i></a></li>
+        {% else %}
+        <li class="disabled"><a><i class="material-icons">chevron_right</i></a></li>
+        {% endif %}
+    </ul>
 </div>
 {% endblock %}

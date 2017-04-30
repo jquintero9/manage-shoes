@@ -13,6 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import (
     UserForm,
     UsuarioForm,
@@ -143,11 +144,29 @@ class ListaCliente(LoginRequiredMixin, View):
 
     template_name = 'usuario/cliente/lista_clientes.html'
     login_url = reverse_lazy('usuario:iniciar_sesion')
+    paginacion = None
+    numero_clientes = 1
 
     def get(self, request):
         if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
                 request.user.has_perm(Usuario.PERMISO_VENDEDOR):
-            context = {'clientes': Cliente.objects.all(), 'form': BusquedaClienteForm()}
+
+            context = {'form': BusquedaClienteForm()}
+
+            page = request.GET.get('page')
+
+            self.paginacion = Paginator(Cliente.objects.all(), self.numero_clientes)
+
+            try:
+                clientes = self.paginacion.page(page)
+            except PageNotAnInteger:
+                clientes = self.paginacion.page(1)
+            except EmptyPage:
+                clientes = self.paginacion.page(self.paginacion.num_pages)
+
+            context['clientes'] = clientes
+            context['numero_paginas'] = range(1, self.paginacion.num_pages + 1)
+
             return render(request, self.template_name, context)
         else:
             raise PermissionDenied
@@ -156,7 +175,7 @@ class ListaCliente(LoginRequiredMixin, View):
         if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
                 request.user.has_perm(Usuario.PERMISO_VENDEDOR):
             form = BusquedaClienteForm(data=request.POST)
-            context = {'form': form}
+            context = {'form': form, 'breadcrumb': 'clientes'}
 
             if form.is_valid():
                 cedula = form.cleaned_data.get('busqueda')

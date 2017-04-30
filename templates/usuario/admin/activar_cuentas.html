@@ -4,62 +4,73 @@
 
 {% block title %}Activar vendedores - {{ user }}{% endblock %}
 
-{% block content %}
-<div class="row">
-    <div class="col s12 m3">
-    {% include 'usuario/admin/menu_admin.html' %}
+{% block panelusuario %}
+{% include 'usuario/admin/panel_admin.html' %}
+{% endblock %}
+
+{% block menuopciones %}
+{% include 'usuario/admin/menu_admin.html' %}
+{% endblock %}
+
+{% block breadcrumb %}
+<a class="breadcrumb">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">
+    Cuentas
+</a>
+<a class="breadcrumb">
+    Activar cuentas
+</a>
+{% endblock %}
+
+{% block contenido %}
+{% if usuarios %}
+<form id="activar-cuentas-form" action="" method="POST"> {% csrf_token %}
+<table class="responsive-table">
+    <thead>
+        <tr>
+            <th>Correo</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Activo</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.user.username }}</td>
+            <td>{{ usuario.nombres }}</td>
+            <td>{{ usuario.apellidos }}</td>
+            <td>
+                <div class="switch">
+                    <label>
+                        Off
+                        <input class="input-switch" type="checkbox" name="{{ usuario.user.username }}">
+                        <span class="lever"></span>
+                        On
+                    </label>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    <div class="input-field">
+        <button id="boton-guardar" class="btn waves-effect waves-light disabled" type="submit">Guardar
+            <i class="material-icons right">send</i>
+        </button>
     </div>
-    <div class="col s12 m8 l9">
-        {% if usuarios %}
-        <form id="activar-cuentas-form" action="" method="POST"> {% csrf_token %}
-        <table class="responsive-table">
-            <thead>
-                <tr>
-                    <th>Correo</th>
-                    <th>Nombres</th>
-                    <th>Apellidos</th>
-                    <th>Activo</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for usuario in usuarios %}
-                <tr>
-                    <td>{{ usuario.user.username }}</td>
-                    <td>{{ usuario.nombres }}</td>
-                    <td>{{ usuario.apellidos }}</td>
-                    <td>
-                        <div class="switch">
-                            <label>
-                                Off
-                                <input class="input-switch" type="checkbox" name="{{ usuario.user.username }}">
-                                <span class="lever"></span>
-                                On
-                            </label>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-            <div class="input-field">
-                <button id="boton-guardar" class="btn waves-effect waves-light disabled" type="submit">Guardar
-                    <i class="material-icons right">send</i>
-                </button>
-            </div>
-        </form>
-        {% else %}
-        <div class="chip">
-            No hay solicitudes pendientes.
-            <i class="close material-icons">close</i>
-        </div>
-        {% endif %}
-    </div>
+</form>
+{% else %}
+<div class="chip">
+    No hay solicitudes pendientes.
+    <i class="close material-icons">close</i>
 </div>
-
+{% endif %}
 {% endblock %}
 
-{% block footer %}
-{% endblock %}
 
 {% block jsfiles %}
 <script src="{% static 'js/activar_cuentas.js' %}"></script>

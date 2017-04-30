@@ -1,117 +1,156 @@
 {% extends 'base.html' %}
 
+{% load staticfiles %}
+
 {% block title %}Lista de productos - {{ user }}{% endblock %}
 
-{% block content %}
+{% block panelusuario %}
+{% include 'usuario/admin/panel_admin.html' %}
+{% endblock %}
+
+{% block menuopciones %}
+{% include 'usuario/admin/menu_admin.html' %}
+<div class="row">
+    {% if marcas %}
+    <ul id="seccion-marcas" class="collection with-header">
+        <li id="header-marca" class="collection-header blue darken-1"><h5 class="white-text">Marcas</h5></li>
+        {% for marca in marcas %}
+        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=marca&id={{ marca.id }}">{{ marca }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <ul class="collection with-header">
+        <li id="header-estilo" class="collection-header blue darken-1"><h5 class="white-text">Estilos</h5></li>
+        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=estilo&id=deportivo">Deportivo</a></li>
+        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=estilo&id=formal">Formal</a></li>
+    </ul>
+    <ul class="collection with-header">
+        <li id="header-genero" class="collection-header blue darken-1"><h5 class="white-text">Género</h5></li>
+        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=hombre">Hombre</a></li>
+        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=mujer">Mujer</a></li>
+        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=unisex">Unisex</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block breadcrumb %}
+<a class="breadcrumb">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">Producto</a>
+<a class="breadcrumb">Lista de Productos</a>
+{% endblock %}
+
+{% block barrabusqueda %}
+{% include 'barra_busqueda.html' %}
+{% endblock %}
+
+{% block contenido %}
 {% include 'mensajes.html' %}
 <div class="row">
-    <div id="menu-vertical" class="col s12 m3">
-        {% include 'usuario/admin/menu_admin.html' %}
-        {% if marcas %}
-        <ul id="dropdown-marcas" class="dropdown-content">
-            {% for marca in marcas %}
-            <li><a href="{% url 'usuario:listar_productos' %}?filtro=marca&id={{ marca.id }}">{{ marca }}</a></li>
+    <div class="row"> <!-- Contenedor para mostrar mensajes -->
+        {% if error_busqueda %}
+        <div class="message-input"><i class="material-icons left">report_problem</i><span>{{ error_busqueda }}</span></div>
+        {% elif vacio %}
+        <div class="message-input"><i class="material-icons left">info</i><span>La lista de productos está vacía.</span></div>
+        {% elif resultados >= 0 %}
+        <div class="message-input"><i class="material-icons left">offline_pin</i><span>Se ha encontrado <b>({{ resultados }})</b> producto(s).</span></div>
+        {% elif error_form %}
+            {% if form.busqueda.errors %}
+            <div class="message-input">
+                <i class="material-icons left">error</i>
+            {% for error in form.busqueda.errors %}
+                error
+                {{ error }}
             {% endfor %}
-        </ul>
-        {% endif %}
-        <a class="btn dropdown-button blue darken-1" href="#!" data-activates="dropdown-marcas">Marcas<i class="material-icons right">arrow_drop_down</i></a>
-        <ul class="collection with-header">
-            <li class="collection-header"><h4 class="blue-text text-darken-1">Estilos</h4></li>
-            <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=estilo&id=deportivo">Deportivo</a></li>
-            <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=estilo&id=formal">Formal</a></li>
-        </ul>
-        <ul class="collection with-header">
-            <li class="collection-header"><h4 class="blue-text text-darken-1">Género</h4></li>
-            <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=hombre">Hombre</a></li>
-            <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=mujer">Mujer</a></li>
-            <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=unisex">Unisex</a></li>
-        </ul>
-    </div>
-    <div class="col s12 m9">
-        <h4 class="center blue-text text-darken-4">Productos</h4>
-        <div class="row"> <!-- Contenedor para mostrar mensajes -->
-            {% if error_busqueda %}
-            <div class="message-input"><i class="material-icons left">report_problem</i><span>{{ error_busqueda }}</span></div>
-            {% elif vacio %}
-            <div class="message-input"><i class="material-icons left">info</i><span>La lista de productos está vacía.</span></div>
-            {% elif resultados >= 0 %}
-            <div class="message-input"><i class="material-icons left">offline_pin</i><span>Se ha encontrado <b>({{ resultados }})</b> producto(s).</span></div>
-            {% elif error_form %}
-                {% if form.busqueda.errors %}
-                <div class="message-input">
-                    <i class="material-icons left">error</i>
-                {% for error in form.busqueda.errors %}
-                    error
-                    {{ error }}
-                {% endfor %}
-                </div>
-                {% endif %}
+            </div>
             {% endif %}
-        </div>
-        {% include 'barra_busqueda.html' %}
-        <div class="row"> <!-- Lista de productos -->
-            <table class="responsive-table striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Marca</th>
-                        <th>Nombre</th>
-                        <th>Talla(s)</th>
-                        <th>Género</th>
-                        <th>Estilo</th>
-                        <th>Stock</th>
-                        <th>Precio</th>
-                        {% if rol == 'administrador' %}
-                        <th class="center">Acciones</th>
-                        {% endif %}
-                    </tr>
-                </thead>
-                <tbody>
-                {% if productos %}
-                    {% for producto in productos %}
-                    <tr>
-                        <td>{{ producto.id_referencia }}</td>
-                        <td>{{ producto.marca }}</td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>
-                        {% for talla in producto.tallas.all %}
-                        {{ talla }}
-                        {% endfor %}
-                        </td>
-                        <td>{{ producto.genero }}</td>
-                        <td>{{ producto.estilo }}</td>
-                        <td>{{ producto.stock }}</td>
-                        <td>${{ producto.precio }}</td>
-                        {% if rol == 'administrador' %}
-                        <td>
-                            <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{{ producto.get_absolute_url_update }}">
-                                <i class="material-icons">mode_edit</i>
-                            </a>
-                            <a class="waves-effect waves-light btn red darken-1" title="Eliminar" href="#modal-eliminar-{{ producto.id }}">
-                                <i class="material-icons">delete</i>
-                            </a>
-                            <!-- Modal Structure -->
-                            <div id="modal-eliminar-{{ producto.id }}" class="modal">
-                                <form action="{{ producto.get_absolute_url_delete }}" method="POST"> {% csrf_token %}
-                                    <div class="modal-content">
-                                        <h4>¿Está seguro que desea eliminar el producto {{ producto.nombre }}?</h4>
-                                    </div>
-                                    <div class="modal-footer">
-                                         <button class="btn waves-effect waves-light red darken-4" type="submit">Si, eliminar
-                                            <i class="material-icons right">warning</i>
-                                         </button>
-                                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn blue accent-2">Cancelar</a>
-                                    </div>
-                                </form>
-                            </div>
-                        </td>
-                        {% endif %}
-                    </tr>
+        {% endif %}
+    </div>
+    <div class="row"> <!-- Lista de productos -->
+        <table class="responsive-table striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Marca</th>
+                    <th>Nombre</th>
+                    <th>Talla(s)</th>
+                    <th>Género</th>
+                    <th>Estilo</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    {% if rol == 'administrador' %}
+                    <th class="center">Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% if productos %}
+                {% for producto in productos %}
+                <tr>
+                    <td>{{ producto.id_referencia }}</td>
+                    <td>{{ producto.marca }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>
+                    {% for talla in producto.tallas.all %}
+                    {{ talla }}
                     {% endfor %}
-                {% endif %}
-                </tbody>
-            </table>
-        </div>
+                    </td>
+                    <td>{{ producto.genero }}</td>
+                    <td>{{ producto.estilo }}</td>
+                    <td>{{ producto.stock }}</td>
+                    <td>${{ producto.precio }}</td>
+                    {% if rol == 'administrador' %}
+                    <td>
+                        <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{{ producto.get_absolute_url_update }}">
+                            <i class="material-icons">mode_edit</i>
+                        </a>
+                        <a class="waves-effect waves-light btn red darken-1" title="Eliminar" href="#modal-eliminar-{{ producto.id }}">
+                            <i class="material-icons">delete</i>
+                        </a>
+                        <!-- Modal Structure -->
+                        <div id="modal-eliminar-{{ producto.id }}" class="modal">
+                            <form action="{{ producto.get_absolute_url_delete }}" method="POST"> {% csrf_token %}
+                                <div class="modal-content">
+                                    <h4>¿Está seguro que desea eliminar el producto {{ producto.nombre }}?</h4>
+                                </div>
+                                <div class="modal-footer">
+                                     <button class="btn waves-effect waves-light red darken-4" type="submit">Si, eliminar
+                                        <i class="material-icons right">warning</i>
+                                     </button>
+                                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn blue accent-2">Cancelar</a>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <ul class="pagination">
+            {% if productos.has_previous %}
+            <li><a href="?page={{ productos.previous_page_number }}"><i class="material-icons">chevron_left</i></a></li>
+            {% else %}
+            <li class="disabled"><a><i class="material-icons">chevron_left</i></a></li>
+            {% endif %}
+            {% for i in numero_paginas %}
+            {% if i == productos.number %}
+            <li class="active blue darken-1"><a>{{ i }}</a></li>
+            {% else %}
+            <li class="waves-effect"><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if productos.has_next %}
+            <li class="waves-effect"><a href="?page={{ productos.next_page_number }}"><i class="material-icons">chevron_right</i></a></li>
+            {% else %}
+            <li class="disabled"><a><i class="material-icons">chevron_right</i></a></li>
+            {% endif %}
+        </ul>
     </div>
 </div>
 {% endblock %}

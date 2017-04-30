@@ -10,36 +10,12 @@
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}" />
 </head>
 <body>
-    <div id="contenido">
-        {% block content %}
-        <div class="row">
-            <div id="menu-vertical" class="col s12 m3">
-                {% block panelusuario %}
-                {% endblock %}
+    {% block header %}
+    {% endblock %}
 
-                {% block menuopciones %}
-                {% endblock %}
-            </div>
-            <div class="col s12 m9">
+    {% block contenido_autenticacion %}
+    {% endblock %}
 
-                <nav class="blue darken-1">
-                    <div class="nav-wrapper">
-                        <div class="col s12">
-                            {% block breadcrumb %}
-                            {% endblock %}
-                        </div>
-                    </div>
-                </nav>
-
-                {% block barrabusqueda %}
-                {% endblock %}
-
-                {% block contenido %}
-                {% endblock %}
-            </div>
-        </div>
-        {% endblock %}
-    </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
     <script src="{% static 'js/init.js' %}"></script>

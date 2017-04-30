@@ -10,10 +10,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Producto, Marca
 from usuario.models import Usuario
 from usuario.utils import regex, error_messages
-from .forms import ProductoForm, BusquedaForm, FiltroProductoForm
+from .forms import ProductoForm, BusquedaForm
 
 # Create your views here.
 
@@ -66,9 +67,10 @@ class ListaProducto(LoginRequiredMixin, View):
     form = BusquedaForm()
     template_name = 'producto/lista_productos.html'
     login_url = reverse_lazy('usuario:iniciar_sesion')
-    rol = tipo_busqueda = filtro = id_filtro = None
+    rol = filtro = id_filtro = None
     busqueda_filtrada = False
-    marcas = Marca.objects.all()
+    paginacion = None
+    numero_productos = 3
 
     def get(self, request):
         """
@@ -85,7 +87,11 @@ class ListaProducto(LoginRequiredMixin, View):
         except KeyError:
             raise PermissionDenied
 
-        context = {'form': self.form, 'marcas': self.marcas, 'rol': self.rol}
+        context = {
+            'form': self.form,
+            'marcas': Marca.objects.all(),
+            'rol': self.rol,
+        }
 
         try:
             self.filtro = request.GET['filtro']
@@ -93,6 +99,8 @@ class ListaProducto(LoginRequiredMixin, View):
             self.busqueda_filtrada = True
         except KeyError:
             pass
+
+        page = request.GET.get('page')
 
         productos = None
 
@@ -117,7 +125,17 @@ class ListaProducto(LoginRequiredMixin, View):
             vacio = True if len(productos) == 0 else False
             context['vacio'] = vacio
 
-        context['productos'] = productos
+        self.paginacion = Paginator(productos, self.numero_productos)
+
+        try:
+            prod = self.paginacion.page(page)
+        except PageNotAnInteger:
+            prod = self.paginacion.page(1)
+        except EmptyPage:
+            prod = self.pagincacion.page(self.paginacion.num_pages)
+
+        context['productos'] = prod
+        context['numero_paginas'] = range(1, self.paginacion.num_pages + 1)
 
         return render(request, self.template_name, context)
 
@@ -135,7 +153,12 @@ class ListaProducto(LoginRequiredMixin, View):
         except KeyError:
             raise PermissionDenied
 
-        context = {'marcas': self.marcas, 'rol': self.rol}
+        context = {
+            'form': self.form,
+            'marcas': Marca.objects.all(),
+            'rol': self.rol,
+        }
+
         self.form = BusquedaForm(data=request.POST)
 
         if self.form.is_valid():

@@ -1,0 +1,22 @@
+{% load staticfiles %}
+<div class="navbar-fixed">
+    <nav class="white">
+        <div class="nav-wrapper">
+            <a href="#!" class="brand-logo orange-text text-lighten-1">
+                <img class="logo-header" src="{% static 'img/manage-shoes-logo.png' %}" alt="">
+            </a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                {% if not user.is_authenticated %}
+                <li><a class="blue-text text-darken-3" href="{% url 'usuario:registrar_vendedor' %}">Registrarse</a></li>
+                <li><a class="blue-text text-darken-3" href="{% url 'usuario:iniciar_sesion' %}">Iniciar Sesión</a></li>
+                {% else %}
+                <li><a class="blue-text text-darken-3" href="{% url 'usuario:cerrar_sesion' %}">Salir</a></li>
+                {% endif %}
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                <li><a href="{% url 'usuario:registrar_vendedor' %}">Registrar</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>

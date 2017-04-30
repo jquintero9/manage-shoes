@@ -2,27 +2,37 @@
 
 {% block title %}Crear Cliente - {{ user }}{% endblock %}
 
-{% block content %}
+{% block panelusuario %}
+{% include 'usuario/admin/panel_admin.html' %}
+{% endblock %}
+
+{% block menuopciones %}
+{% include 'usuario/admin/menu_admin.html' %}
+{% endblock %}
+
+{% block breadcrumb %}
+<a class="breadcrumb">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">Clientes</a>
+<a class="breadcrumb">Lista de Clientes</a>
+{% endblock %}
+
+{% block contenido %}
 {% include 'mensajes.html' %}
-<div class="row">
-    <div id="menu-vertical" class="col s12 m3">
-    {% include 'usuario/admin/menu_admin.html' %}
+<form id="form-center" class="z-depth-4 col s12 m9" action="" method="POST"> {% csrf_token %}
+    <h3 class="center blue-text text-darken-3 ">
+        <i class="material-icons center medium">note_add</i>
+        Crear Cliente
+    </h3>
+     {% include 'usuario/cliente/form_cliente.html' %}
+    <div id="last-row" class="row">
+        <div class="input-field col s12 m7"> <!-- Botón Submit -->
+            <button class="btn waves-effect waves-light" type="submit">Crear
+                <i class="material-icons right">send</i>
+            </button>
+        </div>
     </div>
-    <div class="col s12 m9">
-        <form id="form-center" class="z-depth-4 col s12 m9" action="" method="POST"> {% csrf_token %}
-            <h3 class="center blue-text text-darken-3 ">
-                <i class="material-icons center medium">note_add</i>
-                Crear Cliente
-            </h3>
-             {% include 'usuario/cliente/form_cliente.html' %}
-            <div id="last-row" class="row">
-                <div class="input-field col s12 m7"> <!-- Botón Submit -->
-                    <button class="btn waves-effect waves-light" type="submit">Crear
-                        <i class="material-icons right">send</i>
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+</form>
 {% endblock %}

@@ -1,8 +1,12 @@
 
+form#form-center-autenticacion,
 form#form-center {
     float: none;
-    margin: 64px auto 150px auto;
 }
+
+form#form-center-autenticacion { margin: 64px auto 150px auto; }
+
+form#form-center { margin: 0 auto; }
 
 div#input-email,
 div#input-password,
@@ -37,7 +41,8 @@ a.link-form {
 
 div#producto-collapsible,
 div#cuentas-collapsible,
-div#cliente-collapsible {
+div#cliente-collapsible,
+div#opcion-collapsible {
     padding: 0;
 }
 
@@ -50,5 +55,37 @@ div#menu-vertical {
 ul#lista-menu-vertical {
     margin-top: 0;
 }
+
+li#header-estilo,
+li#header-genero,
+li#header-marca {
+    padding: 1px;
+}
+
+h4#titulo-buscar {
+    padding: 1px;
+}
+
+ul#seccion-marcas {
+    overflow: scroll;
+    max-height: 240px;
+}
+
+span#nombre-usuario {
+    font-size: 1.1rem;
+}
+
+div#contenedor-logo {
+    float: none;
+    margin: 0 auto;
+    width: 200px;
+    height: 96px;
+}
+
+img.logo-header {
+    height: 56px;
+}
+
+nav#barra_busqueda { margin-top: 16px; }
 
 

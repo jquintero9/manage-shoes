@@ -1,13 +1,11 @@
-<div class="row"> <!-- Barra de búsqueda -->
-    <nav class="blue darken-1">
-        <div class="nav-wrapper">
-            <form action="" method="POST"> {% csrf_token %}
-                <div class="input-field">
-                {{ form.busqueda }}
-                <label class="label-icon" for="id_busqueda"><i class="material-icons">search</i></label>
-                <i class="material-icons">close</i>
-                </div>
-            </form>
-        </div>
-    </nav>
-</div>
+<nav id="barra_busqueda" class="blue lighten-1">
+    <div class="nav-wrapper">
+        <form action="" method="POST"> {% csrf_token %}
+            <div class="input-field">
+            {{ form.busqueda }}
+            <label class="label-icon blue-text darken-1" for="id_busqueda"><i class="material-icons">search</i></label>
+            <i class="material-icons">close</i>
+            </div>
+        </form>
+    </div>
+</nav>

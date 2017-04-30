@@ -1,11 +1,15 @@
-{% extends 'base.html' %}
+{% extends 'usuario/autenticacion/base.html' %}
 
 {% block title %}Registrar Vendedor{% endblock %}
 
-{% block content %}
+{% block header %}
+{% include 'header_autenticacion.html' %}
+{% endblock %}
+
+{% block contenido_autenticacion %}
 <div class="container">
 <div class="row">
-    <form id="form-center" class="z-depth-4 col s12 m8" action="" method="POST"> {% csrf_token %}
+    <form id="form-center-autenticacion" class="z-depth-4 col s12 m8" action="" method="POST"> {% csrf_token %}
         <input type="hidden" name="rol" value="vendedor" />
         <div class="row">
             <h2 class="titulo-form blue-text text-darken-3 col s12">Registro Vendedor</h2>

@@ -1,7 +1,7 @@
-
-<ul id="lista-menu-vertical" class="collapsible blue darken-3" data-collapsible="accordion">
+<div class="row">
+<ul id="lista-menu-vertical" class="collapsible" data-collapsible="accordion">
     <li>
-        <div class="collapsible-header"><i class="material-icons">supervisor_account</i>Cuentas</div>
+        <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">supervisor_account</i>Cuentas</div>
         <div id="cuentas-collapsible" class="collapsible-body">
             <!--<ul>
                 <li><a href="{% url 'usuario:activar_cuentas' %}">Activar cuentas</a></li>
@@ -15,7 +15,7 @@
         </div>
     </li>
     <li>
-        <div class="collapsible-header"><i class="material-icons">shopping_cart</i>Productos</div>
+        <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">shopping_cart</i>Productos</div>
         <div id="producto-collapsible" class="collapsible-body">
             <div class="collection">
                 <a href="{% url 'usuario:crear_producto' %}" class="collection-item">
@@ -30,7 +30,7 @@
         </div>
     </li>
     <li>
-        <div class="collapsible-header"><i class="material-icons">assignment_ind</i>Clientes</div>
+        <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">assignment_ind</i>Clientes</div>
         <div id="cliente-collapsible" class="collapsible-body">
             <div class="collection">
                 <a href="{% url 'usuario:registrar_cliente' %}" class="collection-item">
@@ -44,5 +44,16 @@
             </div>
         </div>
     </li>
+    <li>
+        <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">settings</i>Opciones</div>
+        <div id="opcion-collapsible" class="collapsible-body">
+            <div class="collection">
+                <a href="{% url 'usuario:cerrar_sesion' %}" class="collection-item">
+                    <i class="material-icons left">system_update_alt</i>
+                    Salir
+                </a>
+            </div>
+        </div>
+    </li>
 </ul>
-
+</div>
