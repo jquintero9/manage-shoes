@@ -6,24 +6,22 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 from .forms import (
     UserForm,
     UsuarioForm,
     LoginForm,
     ClienteForm,
-    DepartamentoForm,
     BusquedaClienteForm
 )
 from .models import Usuario, Cliente
-from .utils import enviar_email
+from .utils import enviar_email, get_namespace, get_objects
 
 
 class RegistroVendedor(View):
@@ -105,18 +103,22 @@ class RegistroVendedor(View):
 
 class RegistroCliente(LoginRequiredMixin, CreateView):
 
+    """
+    Permite a los usuarios Administrador y Vendedor registrar nuevos clientes
+    en el sistema.
+    """
+
     model = Cliente
     template_name = 'usuario/cliente/crear_cliente.html'
     login_url = reverse_lazy('usuario:iniciar_sesion')
     form_class = ClienteForm
 
-    def get_context_data(self, **kwargs):
-        context = super(RegistroCliente, self).get_context_data(**kwargs)
-        context['form_departamento'] = DepartamentoForm()
-
-        return context
-
     def get(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
                 request.user.has_perm(Usuario.PERMISO_VENDEDOR):
             return super(RegistroCliente, self).get(request, *args, **kwargs)
@@ -124,16 +126,20 @@ class RegistroCliente(LoginRequiredMixin, CreateView):
             raise PermissionDenied
 
     def post(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        Dependiendo del usuario (Administrador o Vendedor) que esté creando el cliente,
+        se define la url a la cual será redirigido una vez se halla guardado el nuevo registro.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
                 request.user.has_perm(Usuario.PERMISO_VENDEDOR):
 
-            try:
-                if request.session['rol'] == Usuario.ADMIN:
-                    self.success_url = reverse_lazy('usuario:admin_home')
-                elif request.session['rol'] == Usuario.VENDEDOR:
-                    self.success_url = reverse_lazy('')
-            except KeyError:
-                pass
+            if request.session.get('rol') == Usuario.ADMIN:
+                self.success_url = reverse_lazy('usuario:admin_listar_clientes')
+            elif request.session.get('rol') == Usuario.VENDEDOR:
+                self.success_url = reverse_lazy('usuario:vendedor_listar_clientes')
 
             return super(RegistroCliente, self).post(request, *args, **kwargs)
         else:
@@ -141,30 +147,39 @@ class RegistroCliente(LoginRequiredMixin, CreateView):
 
 
 class ListaCliente(LoginRequiredMixin, View):
+    """
+    Obtiene una lista con los clientes que están registrados en sistema.
+    """
 
     template_name = 'usuario/cliente/lista_clientes.html'
     login_url = reverse_lazy('usuario:iniciar_sesion')
     paginacion = None
-    numero_clientes = 1
+    numero_clientes = 3
 
     def get(self, request):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        Obtiene la lista de todos los clientes que están registrados en el sistema.
+        Crea la paginación.
+        Se envía al template el namespace de la url EditarProductos, dependiendo del
+        usuario que esté realizando la acción (Administrador o Vendedor). Está url
+        se utiliza para asignarla a la opción de editar de cada uno de los registros de la tabla.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
                 request.user.has_perm(Usuario.PERMISO_VENDEDOR):
 
-            context = {'form': BusquedaClienteForm()}
+            context = {
+                'form': BusquedaClienteForm(),
+                'namespace_editar_cliente': get_namespace(request, view='editar_cliente')
+            }
 
             page = request.GET.get('page')
 
             self.paginacion = Paginator(Cliente.objects.all(), self.numero_clientes)
 
-            try:
-                clientes = self.paginacion.page(page)
-            except PageNotAnInteger:
-                clientes = self.paginacion.page(1)
-            except EmptyPage:
-                clientes = self.paginacion.page(self.paginacion.num_pages)
-
-            context['clientes'] = clientes
+            context['clientes'] = get_objects(self.paginacion, page)
             context['numero_paginas'] = range(1, self.paginacion.num_pages + 1)
 
             return render(request, self.template_name, context)
@@ -172,14 +187,26 @@ class ListaCliente(LoginRequiredMixin, View):
             raise PermissionDenied
 
     def post(self, request):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        Obtiene un cliente mendiante el formulario de búsqueda, la búsqueda se realiza
+        mediante el número de cédula del cliente. Se Valida el formulario y se retorna el resultado.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
                 request.user.has_perm(Usuario.PERMISO_VENDEDOR):
             form = BusquedaClienteForm(data=request.POST)
-            context = {'form': form, 'breadcrumb': 'clientes'}
+
+            context = {
+                'form': form,
+                'namespace_editar_cliente': get_namespace(request, view='editar_cliente')
+            }
 
             if form.is_valid():
                 cedula = form.cleaned_data.get('busqueda')
                 clientes = Cliente.objects.filter(cedula=cedula)
+
                 context['clientes'] = clientes
                 context['resultado'] = len(clientes)
 
@@ -189,6 +216,9 @@ class ListaCliente(LoginRequiredMixin, View):
 
 
 class ActualizacionCliente(LoginRequiredMixin, UpdateView):
+    """
+    Permite modificar los datos de los clientes.
+    """
 
     model = Cliente
     template_name = 'usuario/cliente/actualizar_cliente.html'
@@ -196,6 +226,11 @@ class ActualizacionCliente(LoginRequiredMixin, UpdateView):
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
     def get(self, request, *args, **kwargs):
+        """
+       Verifca el permiso del usuario que está intentado acceder a la vista.
+       Si el permiso no es válido deniega el acceso.
+       """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
                 request.user.has_perm(Usuario.PERMISO_VENDEDOR):
 
@@ -204,16 +239,20 @@ class ActualizacionCliente(LoginRequiredMixin, UpdateView):
             raise PermissionDenied
 
     def post(self, request, *args, **kwargs):
+        """
+       Verifca el permiso del usuario que está intentado acceder a la vista.
+       Si el permiso no es válido deniega el acceso.
+       Dependiendo del tipo de usuario que esté realizando la petición, se define la
+       url a donde será redirigido una vez se hayan actualizado los datos.
+       """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
                 request.user.has_perm(Usuario.PERMISO_VENDEDOR):
 
-            try:
-                if request.session['rol'] == Usuario.ADMIN:
-                    self.success_url = reverse_lazy('usuario:admin_home')
-                elif request.session['rol'] == Usuario.VENDEDOR:
-                    self.success_url = reverse_lazy('')
-            except KeyError:
-                pass
+            if request.session.get('rol') == Usuario.ADMIN:
+                self.success_url = reverse_lazy('usuario:admin_listar_clientes')
+            elif request.session.get('rol') == Usuario.VENDEDOR:
+                self.success_url = reverse_lazy('usuario:vendedor_listar_clientes')
 
             return super(ActualizacionCliente, self).post(request, *args, **kwargs)
         else:
@@ -222,11 +261,31 @@ class ActualizacionCliente(LoginRequiredMixin, UpdateView):
 
 class EliminacionCliente(LoginRequiredMixin, DeleteView):
 
+    """
+    Permite al usuario Administrador eliminar a los clientes del sistema.
+    """
+
     model = Cliente
     login_url = reverse_lazy('usuario:iniciar_sesion')
-    success_url = reverse_lazy('usuario:listar_clientes')
+    success_url = reverse_lazy('usuario:admin_listar_clientes')
+
+    def get(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
+        if request.user.has_perm(Usuario.ADMIN):
+            return super(EliminacionCliente, self).get(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
     def post(self, request, *args, **kwargs):
+        """
+       Verifca el permiso del usuario que está intentado acceder a la vista.
+       Si el permiso no es válido deniega el acceso.
+       """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN):
             return super(EliminacionCliente, self).post(request, *args, **kwargs)
         else:
@@ -325,6 +384,11 @@ class ActivacionCuentas(LoginRequiredMixin, View,):
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
     def get(self, request):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        Obtiene una lista de las cuentas que aún no han sido activadas.
+        """
 
         if request.user.has_perm(Usuario.PERMISO_ADMIN):
 
@@ -337,6 +401,13 @@ class ActivacionCuentas(LoginRequiredMixin, View,):
             raise PermissionDenied
 
     def post(self, request):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        Recibe los datos del formulario de activación y los valída. Luego activa las cuentas
+        e informa al usuario vendedor por medio de un mensaje de correo electrónico.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN):
             data = request.POST.items()
 
@@ -357,11 +428,19 @@ class ActivacionCuentas(LoginRequiredMixin, View,):
 
 
 class HomeAdmin(LoginRequiredMixin, View):
+    """
+    Muestra la vista del home del administrador.
+    """
 
     template_name = 'usuario/admin/home.html'
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
     def get(self, request):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN):
             return render(request, self.template_name, {})
         else:
@@ -369,11 +448,18 @@ class HomeAdmin(LoginRequiredMixin, View):
 
 
 class HomeVendedor(LoginRequiredMixin, View):
-
+    """
+    Muestra la vista del Home Vendedor.
+    """
     template_name = 'usuario/vendedor/home.html'
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
     def get(self, request):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
             return render(request, self.template_name, {})
         else:
@@ -382,5 +468,15 @@ class HomeVendedor(LoginRequiredMixin, View):
 
 @login_required(login_url=reverse_lazy('usuario:iniciar_sesion'))
 def cerrar_sesion(request):
-    logout(request)
-    return HttpResponseRedirect(reverse_lazy('usuario:iniciar_sesion'))
+    """
+    Verifca el permiso del usuario que está intentado acceder a la vista.
+    Si el permiso no es válido deniega el acceso.
+    Cierra la sesión actual y redirecciona al usuario a la vista de inicio de sesión.
+    """
+
+    if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+            request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+        logout(request)
+        return HttpResponseRedirect(reverse_lazy('usuario:iniciar_sesion'))
+    else:
+        raise PermissionDenied

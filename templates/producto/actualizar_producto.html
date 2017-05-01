@@ -2,12 +2,12 @@
 
 {% block title %}Editar Producto - {{ user }}{% endblock %}
 
-{% block panelusuario %}
-{% include 'usuario/admin/panel_admin.html' %}
-{% endblock %}
-
 {% block menuopciones %}
+{% if request.session.rol == 'administrador' %}
 {% include 'usuario/admin/menu_admin.html' %}
+{% elif request.session.rol == 'vendedor' %}
+{% include 'usuario/vendedor/menu_vendedor.html' %}
+{% endif %}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -16,6 +16,11 @@
     Home
 </a>
 <a class="breadcrumb">Producto</a>
+{% if request.session.rol == 'administrador' %}
+<a href="{% url 'usuario:admin_listar_productos' %}" class="breadcrumb">Lista de Productos</a>
+{% elif request.session.rol == 'vendedor' %}
+<a href="{% url 'usuario:vendedor_listar_productos' %}" class="breadcrumb">Lista de Productos</a>
+{% endif %}
 <a class="breadcrumb">Editar Producto</a>
 {% endblock %}
 
@@ -32,6 +37,15 @@
             <button class="btn waves-effect waves-light" type="submit">Editar
                 <i class="material-icons right">send</i>
             </button>
+            {% if request.session.rol == 'administrador' %}
+            <a class="btn waves-effect waves-light red darken-1" href="{% url 'usuario:admin_listar_productos' %}">Cancelar
+                <i class="material-icons left">error</i>
+            </a>
+            {% elif request.session.rol == 'vendedor' %}
+            <a class="btn waves-effect waves-light red darken-1" href="{% url 'usuario:vendedor_listar_productos' %}">Cancelar
+                <i class="material-icons left">error</i>
+            </a>
+            {% endif %}
         </div>
     </div>
 </form>

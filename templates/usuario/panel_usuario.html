@@ -1,0 +1,20 @@
+{% load staticfiles %}
+<div class="row blue darken-1">
+    <div class="col s12 z-depth-1">
+        <div>
+            <div id="contenedor-logo" class="col s12 m6">
+                <img id="logo" class="responsive-img" src="{% static 'img/manage-shoes-logo.png' %}" alt="" title="Manage Shoes" />
+            </div>
+        </div>
+        <div class="row valign-wrapper">
+            <div class="col s2">
+              <img src="{% static 'img/user-image.jpg' %}" class="circle responsive-img"> <!-- notice the "circle" class -->
+            </div>
+            <div class="col s10">
+                <span id="nombre-usuario" class="white-text">
+                    {{ request.session.rol|upper }}: <b>{{ user }}</b>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

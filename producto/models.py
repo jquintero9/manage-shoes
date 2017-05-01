@@ -169,7 +169,6 @@ class Producto(models.Model):
         return reverse_lazy('usuario:eliminar_producto', kwargs={'pk': self.id})
 
 
-
 class Factura(models.Model):
 
     """

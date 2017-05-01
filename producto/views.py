@@ -10,13 +10,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 from .models import Producto, Marca
 from usuario.models import Usuario
-from usuario.utils import regex, error_messages
+from usuario.utils import regex, get_url, get_namespace, get_objects
 from .forms import ProductoForm, BusquedaForm
-
-# Create your views here.
 
 
 class CreacionProducto(LoginRequiredMixin, CreateView):
@@ -74,104 +72,109 @@ class ListaProducto(LoginRequiredMixin, View):
 
     def get(self, request):
         """
-        Se envía al template una variable rol con el rol del usuario, para verificar si el
-        usuario puede gestionar(editar y eliminar) los productos de la lista.
-
         Se obtinen una lista con todos los productos del inventario.
         Se crea una variable 'vacio' la cual determina si la lista de prouctos
         está vacía, para mostrar el respectivo mensaje en el template.
+
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        Obtiene la lista de todos los clientes que están registrados en el sistema.
+        Crea la paginación.
+
+        Se envía al template la url y el namespace de las urls ListarProductos y EditarProductos, dependiendo del
+        usuario que esté realizando la acción (Administrador o Vendedor). Está url
+        se utiliza para asignarla a los filtros de búqueda (marca, estilo, género).
         """
 
-        try:
-            self.rol = request.session['rol']
-        except KeyError:
-            raise PermissionDenied
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+                request.user.has_perm(Usuario.PERMISO_VENDEDOR):
 
-        context = {
-            'form': self.form,
-            'marcas': Marca.objects.all(),
-            'rol': self.rol,
-        }
+            context = {
+                'form': self.form,
+                'marcas': Marca.objects.all(),
+                'url_listar_producto': get_url(request, view='listar_productos'),
+                'namespace_editar_producto': get_namespace(request, view='editar_producto')
+            }
 
-        try:
-            self.filtro = request.GET['filtro']
-            self.id_filtro = request.GET['id']
-            self.busqueda_filtrada = True
-        except KeyError:
-            pass
+            try:
+                self.filtro = request.GET['filtro']
+                self.id_filtro = request.GET['id']
+                self.busqueda_filtrada = True
+            except KeyError:
+                pass
 
-        page = request.GET.get('page')
+            page = request.GET.get('page')
 
-        productos = None
+            productos = None
 
-        if self.busqueda_filtrada:
-            if self.filtro == ListaProducto.MARCA:
-                if re.match(regex['numero'], self.id_filtro):
-                    productos = Producto.objects.filter(marca=self.id_filtro)
-            elif self.filtro == ListaProducto.ESTILO:
-                if re.match(regex['estilo'], self.id_filtro):
-                    productos = Producto.objects.filter(estilo=self.id_filtro)
-                    print productos
-            elif self.filtro == ListaProducto.GENERO:
-                if re.match(regex['genero'], self.id_filtro):
-                    productos = Producto.objects.filter(genero=self.id_filtro)
+            if self.busqueda_filtrada:
+                if self.filtro == ListaProducto.MARCA:
+                    if re.match(regex['numero'], self.id_filtro):
+                        productos = Producto.objects.filter(marca=self.id_filtro)
+                elif self.filtro == ListaProducto.ESTILO:
+                    if re.match(regex['estilo'], self.id_filtro):
+                        productos = Producto.objects.filter(estilo=self.id_filtro)
+                        print productos
+                elif self.filtro == ListaProducto.GENERO:
+                    if re.match(regex['genero'], self.id_filtro):
+                        productos = Producto.objects.filter(genero=self.id_filtro)
 
-            if productos is not None:
-                context['resultados'] = len(productos)
+                if productos is not None:
+                    context['resultados'] = len(productos)
+                else:
+                    context['error_busqueda'] = u'El filtro de búsqueda no es válido.'
             else:
-                context['error_busqueda'] = u'El filtro de búsqueda no es válido.'
+                productos = Producto.objects.all()
+                vacio = True if len(productos) == 0 else False
+                context['vacio'] = vacio
+
+            self.paginacion = Paginator(productos, self.numero_productos)
+
+            prod = get_objects(self.paginacion, page)
+
+            context['productos'] = prod
+            context['numero_paginas'] = range(1, self.paginacion.num_pages + 1)
+
+            return render(request, self.template_name, context)
         else:
-            productos = Producto.objects.all()
-            vacio = True if len(productos) == 0 else False
-            context['vacio'] = vacio
-
-        self.paginacion = Paginator(productos, self.numero_productos)
-
-        try:
-            prod = self.paginacion.page(page)
-        except PageNotAnInteger:
-            prod = self.paginacion.page(1)
-        except EmptyPage:
-            prod = self.pagincacion.page(self.paginacion.num_pages)
-
-        context['productos'] = prod
-        context['numero_paginas'] = range(1, self.paginacion.num_pages + 1)
-
-        return render(request, self.template_name, context)
+            raise PermissionDenied
 
     def post(self, request):
         """
-        Se obtiene el rol del usuario para detenmiar si este puede gestionar (editar y eliminar)
-        los productos del inventario.
         Se válida la búsqueda del usuario, si es válida se realiza la consulta a la base de datos y se
         verifica que si hubieron resultados. Si búsqueda no es válida se envía el formulario con el
         correspondiente mensaje de error.
+
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        Obtiene la lista de todos los clientes que están registrados en el sistema.
         """
 
-        try:
-            self.rol = request.session['rol']
-        except KeyError:
-            raise PermissionDenied
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or \
+                request.user.has_perm(Usuario.PERMISO_VENDEDOR):
 
-        context = {
-            'form': self.form,
-            'marcas': Marca.objects.all(),
-            'rol': self.rol,
-        }
+            context = {
+                'form': self.form,
+                'marcas': Marca.objects.all(),
+                'url_listar_producto': get_url(request, view='listar_productos'),
+                'namespace_editar_producto': get_namespace(request, view='editar_producto')
+            }
 
-        self.form = BusquedaForm(data=request.POST)
+            self.form = BusquedaForm(data=request.POST)
 
-        if self.form.is_valid():
-            id_referencia = self.form.cleaned_data.get('busqueda')
-            productos = Producto.objects.filter(id_referencia=id_referencia)
-            context['resultados'] = len(productos)
-            context['productos'] = productos
+            if self.form.is_valid():
+                id_referencia = self.form.cleaned_data.get('busqueda')
+                productos = Producto.objects.filter(id_referencia=id_referencia)
+                context['resultados'] = len(productos)
+                context['productos'] = productos
+            else:
+                context['error_form'] = True
+
+            context['form'] = self.form
+
+            return render(request, self.template_name, context)
         else:
-            context['error_form'] = True
-
-        context['form'] = self.form
-
-        return render(request, self.template_name, context)
+            raise PermissionDenied
 
 
 class ActualizacionProducto(LoginRequiredMixin, UpdateView):
@@ -184,7 +187,6 @@ class ActualizacionProducto(LoginRequiredMixin, UpdateView):
     template_name = 'producto/actualizar_producto.html'
     form_class = ProductoForm
     login_url = reverse_lazy('usuario:iniciar_sesion')
-    success_url = reverse_lazy('usuario:admin_home')
 
     def get(self, request, *args, **kwargs):
         """
@@ -192,7 +194,7 @@ class ActualizacionProducto(LoginRequiredMixin, UpdateView):
         Si el permiso no es válido deniega el acceso.
         """
 
-        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or request.user.has_perm(Usuario.PERMISO_VENDEDOR):
             return super(ActualizacionProducto, self).get(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -201,20 +203,47 @@ class ActualizacionProducto(LoginRequiredMixin, UpdateView):
         """
         Verifca el permiso del usuario que está intentado acceder a la vista.
         Si el permiso no es válido deniega el acceso.
+        Dependiendo del tipo de usuario que esté realizando la petición, se define la
+        url a donde será redirigido una vez se hayan actualizado los datos.
         """
-        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) or request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+
+            if request.session.get('rol') == Usuario.ADMIN:
+                self.success_url = reverse_lazy('usuario:admin_listar_productos')
+            elif request.session.get('rol') == Usuario.VENDEDOR:
+                self.success_url = reverse_lazy('usuario:vendedor_listar_productos')
+
             return super(ActualizacionProducto, self).post(request, *args, **kwargs)
         else:
             raise PermissionDenied
 
 
 class EliminacionProducto(LoginRequiredMixin, DeleteView):
+    """
+    Permite al usuario Administrador eliminar los productos del inventario.
+    """
 
     model = Producto
-    success_url = reverse_lazy('usuario:listar_productos')
+    success_url = reverse_lazy('usuario:admin_listar_productos')
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
+    def get(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            return super(EliminacionProducto, self).get(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
     def post(self, request, *args, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+
         if request.user.has_perm(Usuario.PERMISO_ADMIN):
             return super(EliminacionProducto, self).post(request, *args, **kwargs)
         else:

@@ -2,6 +2,19 @@
 
 {% block title %}Home Vendedor - {{ user }}{% endblock %}
 
-{% block content %}
-<h2>Home del Vendedor</h2>
+{% block menuopciones %}
+{% include 'usuario/vendedor/menu_vendedor.html' %}
+{% endblock %}
+
+{% block breadcrumb %}
+<a class="breadcrumb">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+{% endblock %}
+
+
+{% block contenido %}
+{% include 'mensajes.html' %}
+<p>Home</p>
 {% endblock %}

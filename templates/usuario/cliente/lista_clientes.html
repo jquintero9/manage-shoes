@@ -2,12 +2,12 @@
 
 {% block title %}Lista de Clientes- {{ user }}{% endblock %}
 
-{% block panelusuario %}
-{% include 'usuario/admin/panel_admin.html' %}
-{% endblock %}
-
 {% block menuopciones %}
+{% if request.session.rol == 'administrador' %}
 {% include 'usuario/admin/menu_admin.html' %}
+{% elif request.session.rol == 'vendedor' %}
+{% include 'usuario/vendedor/menu_vendedor.html' %}
+{% endif %}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -64,9 +64,10 @@
                 <td>{{ cliente.direccion}}</td>
                 <td>{{ cliente.telefono }}</td>
                 <td>
-                    <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{{ cliente.get_absolute_url_edit }}">
+                    <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{% url namespace_editar_cliente cliente.id %}">
                         <i class="material-icons">mode_edit</i>
                     </a>
+                    {% if request.session.rol == 'administrador' %}
                     <a class="waves-effect waves-light btn red darken-1" title="Eliminar" href="#modal-eliminar-{{ cliente.id }}">
                         <i class="material-icons">delete</i>
                     </a>
@@ -84,6 +85,7 @@
                             </div>
                         </form>
                     </div>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

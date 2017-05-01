@@ -3,7 +3,9 @@
 
 from django.template import loader
 from django.core.mail import send_mail
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.conf import settings
+from django.urls import reverse_lazy
 
 regex = {
     'texto': r'^[A-Za-z·ÈÌÛ˙¡…Õ”⁄\s]+$',
@@ -56,3 +58,46 @@ def enviar_email(email, nombre):
         fail_silently=True,
         html_message=html_message
     )
+
+
+def get_prefix(request):
+    if request.session.get('rol') == 'administrador':
+        prefix = 'admin'
+    elif request.session.get('rol') == 'vendedor':
+        prefix = 'vendedor'
+
+    return prefix
+
+
+def get_url(request, view):
+    prefix = get_prefix(request)
+
+    if view == 'listar_productos':
+        url = reverse_lazy('usuario:' + prefix + '_listar_productos')
+    elif view == 'listar_clientes':
+        url = reverse_lazy('usuario:' + prefix + '_listar_clientes')
+
+    return url
+
+
+def get_namespace(request, view):
+    prefix = get_prefix(request)
+
+    if view == 'editar_producto':
+        namespace = 'usuario:' + prefix + '_editar_producto'
+    elif view == 'editar_cliente':
+        namespace = 'usuario:' + prefix + '_editar_cliente'
+
+    return namespace
+
+
+def get_objects(paginacion, page):
+
+    try:
+        objetos = paginacion.page(page)
+    except PageNotAnInteger:
+        objetos = paginacion.page(1)
+    except EmptyPage:
+        objetos = paginacion.page(paginacion.num_pages)
+
+    return objetos

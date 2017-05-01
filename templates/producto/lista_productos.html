@@ -4,31 +4,31 @@
 
 {% block title %}Lista de productos - {{ user }}{% endblock %}
 
-{% block panelusuario %}
-{% include 'usuario/admin/panel_admin.html' %}
-{% endblock %}
-
 {% block menuopciones %}
+{% if request.session.rol == 'administrador' %}
 {% include 'usuario/admin/menu_admin.html' %}
+{% elif request.session.rol == 'vendedor' %}
+{% include 'usuario/vendedor/menu_vendedor.html' %}
+{% endif %}
 <div class="row">
     {% if marcas %}
     <ul id="seccion-marcas" class="collection with-header">
         <li id="header-marca" class="collection-header blue darken-1"><h5 class="white-text">Marcas</h5></li>
         {% for marca in marcas %}
-        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=marca&id={{ marca.id }}">{{ marca }}</a></li>
+        <li><a class="collection-item" href="{{ url_listar_producto }}?filtro=marca&id={{ marca.id }}">{{ marca }}</a></li>
         {% endfor %}
     </ul>
     {% endif %}
     <ul class="collection with-header">
         <li id="header-estilo" class="collection-header blue darken-1"><h5 class="white-text">Estilos</h5></li>
-        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=estilo&id=deportivo">Deportivo</a></li>
-        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=estilo&id=formal">Formal</a></li>
+        <li><a class="collection-item" href="{{ url_listar_producto }}?filtro=estilo&id=deportivo">Deportivo</a></li>
+        <li><a class="collection-item" href="{{ url_listar_producto }}?filtro=estilo&id=formal">Formal</a></li>
     </ul>
     <ul class="collection with-header">
         <li id="header-genero" class="collection-header blue darken-1"><h5 class="white-text">Género</h5></li>
-        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=hombre">Hombre</a></li>
-        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=mujer">Mujer</a></li>
-        <li><a class="collection-item" href="{% url 'usuario:listar_productos' %}?filtro=genero&id=unisex">Unisex</a></li>
+        <li><a class="collection-item" href="{{ url_listar_producto }}?filtro=genero&id=hombre">Hombre</a></li>
+        <li><a class="collection-item" href="{{ url_listar_producto }}?filtro=genero&id=mujer">Mujer</a></li>
+        <li><a class="collection-item" href="{{ url_listar_producto }}?filtro=genero&id=unisex">Unisex</a></li>
     </ul>
 </div>
 {% endblock %}
@@ -80,9 +80,7 @@
                     <th>Estilo</th>
                     <th>Stock</th>
                     <th>Precio</th>
-                    {% if rol == 'administrador' %}
                     <th class="center">Acciones</th>
-                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -101,11 +99,11 @@
                     <td>{{ producto.estilo }}</td>
                     <td>{{ producto.stock }}</td>
                     <td>${{ producto.precio }}</td>
-                    {% if rol == 'administrador' %}
                     <td>
-                        <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{{ producto.get_absolute_url_update }}">
+                        <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{% url namespace_editar_producto producto.id %}">
                             <i class="material-icons">mode_edit</i>
                         </a>
+                        {% if request.session.rol == 'administrador' %}
                         <a class="waves-effect waves-light btn red darken-1" title="Eliminar" href="#modal-eliminar-{{ producto.id }}">
                             <i class="material-icons">delete</i>
                         </a>
@@ -123,8 +121,8 @@
                                 </div>
                             </form>
                         </div>
+                        {% endif %}
                     </td>
-                    {% endif %}
                 </tr>
                 {% endfor %}
             {% endif %}

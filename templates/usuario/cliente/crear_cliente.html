@@ -2,10 +2,6 @@
 
 {% block title %}Crear Cliente - {{ user }}{% endblock %}
 
-{% block panelusuario %}
-{% include 'usuario/admin/panel_admin.html' %}
-{% endblock %}
-
 {% block menuopciones %}
 {% include 'usuario/admin/menu_admin.html' %}
 {% endblock %}
@@ -32,6 +28,15 @@
             <button class="btn waves-effect waves-light" type="submit">Crear
                 <i class="material-icons right">send</i>
             </button>
+            {% if request.session.rol == 'administrador' %}
+            <a class="btn waves-effect waves-light red darken-1" href="{% url 'usuario:admin_home' %}">Cancelar
+                <i class="material-icons left">error</i>
+            </a>
+            {% elif request.session.rol == 'vendedor' %}
+            <a class="btn waves-effect waves-light red darken-1" href="{% url 'usuario:vendedor_home' %}">Cancelar
+                <i class="material-icons left">error</i>
+            </a>
+            {% endif %}
         </div>
     </div>
 </form>

@@ -14,9 +14,7 @@
         {% block content %}
         <div class="row">
             <div id="menu-vertical" class="col s12 m3">
-                {% block panelusuario %}
-                {% endblock %}
-
+                {% include 'usuario/panel_usuario.html' %}
                 {% block menuopciones %}
                 {% endblock %}
             </div>
