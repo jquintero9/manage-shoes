@@ -42,7 +42,9 @@ a.link-form {
 div#producto-collapsible,
 div#cuentas-collapsible,
 div#cliente-collapsible,
-div#opcion-collapsible {
+div#opcion-collapsible,
+div#factura-collapsible,
+div#contenedor-buscar-cedula {
     padding: 0;
 }
 
@@ -86,10 +88,49 @@ img.logo-header {
     height: 56px;
 }
 
-img.logo-panel-usuario {
+/* Estilos del template crear factura. */
 
+/* Estilos de los elementos
+que contienen los forumularos,
+para buscar cliente y productos.
+ */
+#btn-buscar-cliente,
+#btn-agregar-cliente {  }
+
+div#collection-buscar-cliente,
+div#collection-buscar-producto {
+    padding: 0;
+    margin-top: 1px;
 }
 
-nav#barra_busqueda { margin-top: 16px; }
+/* Estilos de la factura */
+div.contenedor-logo-factura {
+    width: 20%;
+}
 
+div.contenedor-info-logo {
+    width: 80%;
+}
 
+div.texto-factura {
+    font-size: 0.8rem;
+}
+
+.columna {
+    float: left;
+}
+
+.columna-derecha {
+    float: right;
+}
+
+div.contenedor-info-cliente {
+    width: 50%;
+}
+
+div.contenedor-info-vendedor {
+    width: 50%;
+}
+
+div#contenedor-factura,
+div#header-factura { border: 1px solid #DDD; }

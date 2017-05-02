@@ -3,7 +3,11 @@
 {% block title %}Crear Cliente - {{ user }}{% endblock %}
 
 {% block menuopciones %}
+{% if request.session.rol == 'administrador' %}
 {% include 'usuario/admin/menu_admin.html' %}
+{% elif request.session.rol == 'vendedor' %}
+{% include 'usuario/vendedor/menu_vendedor.html' %}
+{% endif %}
 {% endblock %}
 
 {% block breadcrumb %}

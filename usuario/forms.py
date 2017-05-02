@@ -127,3 +127,11 @@ class BusquedaClienteForm(forms.Form):
         widget=forms.TextInput(attrs={'type': 'search', 'placeholder': u'Buscar por cédula'}),
         validators=[RegexValidator(regex=regex['cedula'], message=error_messages['cedula'])]
     )
+
+
+class FormBusquedaCliente(forms.Form):
+    cedula = forms.CharField(
+        max_length=10,
+        widget=forms.TextInput(attrs={'type': 'search', 'placeholder': u'Buscar por cédula'}),
+        validators=[RegexValidator(regex=regex['cedula'], message=error_messages['cedula'])]
+    )

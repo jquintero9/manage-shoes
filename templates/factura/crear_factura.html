@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}Crear Factura - {{ user }}{% endblock %}
+
+{% block menuopciones %}
+{% include 'usuario/vendedor/menu_vendedor.html' %}
+
+<!-- Modal Trigger -->
+<a class="waves-effect waves-light btn" href="#modal-buscar-cliente">Agregar cliente</a>
+
+<!-- Modal Structure -->
+<div id="modal-buscar-cliente" class="modal">
+    <div class="modal-content">
+        <div class="collection-header blue darken-1">
+            <h5 class="center white-text">
+                <i class="material-icons">assignment_ind</i>
+                Cliente
+            </h5>
+        </div>
+        <div class="collection-item">
+            <form id="form-buscar-cliente" action="" method="POST"> {% csrf_token %}
+                {{ form_cliente }}
+                <button id="btn-buscar-cliente" class="btn-floating waves-effect waves-light blue darken-1" type="submit"><i class="material-icons">search</i></button>
+                <a href="#" id="btn-agregar-cliente" class="btn-floating waves-effect waves-light red darken-1"><i class="material-icons">add</i></a>
+                <span id="respuesta-busqueda-cliente"></span>
+            </form>
+            <div class="preloader-wrapper small active">
+                    <div class="spinner-layer spinner-green-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div><div class="gap-patch">
+                        <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
+                 </div>
+            </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block breadcrumb %}
+<a class="breadcrumb">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">
+    Factuas
+</a>
+<a class="breadcrumb">
+    Crear Factura
+</a>
+{% endblock %}
+
+
+{% block contenido %}
+{% include 'mensajes.html' %}
+<div id="contenedor-factura" class="row">
+    <div id="header-factura" class="row"><!-- Cabecera Factura -->
+        <div class="col s12 m8">
+            <div class="columna contenedor-logo-factura">
+                <img id="logo-factura" class="responsive-img" src="{% static 'img/manage-shoes-logo.png' %}" />
+            </div>
+            <div class="columna contenedor-info-logo">
+                <div><b>Manage Shoes</b></div>
+                <div class="texto-factura">Cra 5 # 22-11</div>
+                <div class="texto-factura">Pereira - Risaralda</div>
+                <div class="texto-factura">manage_shoes@gmail.com</div>
+            </div>
+        </div>
+        <div class="col s12 m4">
+            <div class="texto-factura right-align"><b>Fecha:</b> XXX</div>
+            <div class="texto-factura right-align"><b>Factura N°:</b> 33</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <div class="columna contenedor-info-cliente">  <!--- Información Cliente -->
+                <h6>Cliente:</h6>
+                <div id="cedula-cliente" class="texto-factura"></div>
+                <div id="nombre-cliente" class="texto-factura"></div>
+                <div id="direccion-cliente" class="texto-factura"></div>
+                <div id="ciudad-cliente" class="texto-factura"></div>
+                <div id="telefono-cliente" class="texto-factura"></div>
+            </div>
+            <div class="columna contenedor-info-vendedor"> <!-- Información Vendedor -->
+                <h6 class="right-align">Vendedor:</h6>
+                <div class="texto-factura right-align">{{ user }}</div>
+                <div class="texto-factura right-align">{{ user.nombres }}</div>
+                <div class="texto-factura right-align">{{ user.apellidos }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <h5>Detalle Factura</h5>
+            <table class="responsive-table">
+                <thead>
+                    <tr>
+                        <th>CANT</th>
+                        <th>PRODUCTO</th>
+                        <th>VR. UNIT</th>
+                        <th>VR. TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>2</td>
+                    <td>Adias F50</td>
+                    <td>$280.000</td>
+                    <td>$560.000</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block jsfiles %}
+<script src="{% static 'js/crear_factura.js' %}" ></script>
+{% endblock %}

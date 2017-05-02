@@ -1,8 +1,10 @@
 #!usr/local/bin
 # coding: latin-1
 
+import json
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -18,7 +20,8 @@ from .forms import (
     UsuarioForm,
     LoginForm,
     ClienteForm,
-    BusquedaClienteForm
+    BusquedaClienteForm,
+    FormBusquedaCliente,
 )
 from .models import Usuario, Cliente
 from .utils import enviar_email, get_namespace, get_objects
@@ -478,5 +481,47 @@ def cerrar_sesion(request):
             request.user.has_perm(Usuario.PERMISO_VENDEDOR):
         logout(request)
         return HttpResponseRedirect(reverse_lazy('usuario:iniciar_sesion'))
+    else:
+        raise PermissionDenied
+
+
+@login_required(login_url=reverse_lazy('usuario:iniciar_sesion'))
+def buscar_cliente(request):
+    if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+        if request.method == 'POST':
+            datos = json.loads(request.body)
+            print datos
+            form = FormBusquedaCliente(data=datos)
+
+            if form.is_valid():
+                cedula = form.cleaned_data.get('cedula')
+
+                try:
+                    cliente = Cliente.objects.get(cedula=cedula)
+                except ObjectDoesNotExist:
+                    cliente = None
+
+                if cliente:
+                    response = {
+                        "response": "success",
+                        "id": cliente.id,
+                        "cedula": cliente.cedula,
+                        "nombre": cliente.nombre_completo(),
+                        "direccion": cliente.direccion,
+                        "telefono": cliente.telefono,
+                        "ciudad": cliente.ciudad.get_nombre()
+                    }
+                else:
+                    response = {
+                        "response": "empty",
+                        "mensaje": u"El cliente no existe."
+                    }
+            else:
+                response = {
+                    "response": "error-form",
+                    "mensaje": u"El número de cédula no es válido"
+                }
+
+            return HttpResponse(json.dumps(response))
     else:
         raise PermissionDenied

@@ -119,6 +119,9 @@ class Ciudad(models.Model):
     def __unicode__(self):
         return '%s (%s)' % (self.nombre, self.departamento)
 
+    def get_nombre(self):
+        return '%s - %s' % (self.nombre, self.departamento)
+
 
 class Cliente(models.Model):
 

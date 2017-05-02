@@ -1,6 +1,17 @@
 <div class="row">
 <ul id="lista-menu-vertical" class="collapsible" data-collapsible="accordion">
     <li>
+        <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">description</i>Facturas</div>
+        <div id="factura-collapsible" class="collapsible-body">
+            <div class="collection">
+                <a href="{% url 'usuario:crear_factura' %}" class="collection-item">
+                    Crear
+                    <i class="material-icons left">add</i>
+                </a>
+            </div>
+        </div>
+    </li>
+    <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">shopping_cart</i>Productos</div>
         <div id="producto-collapsible" class="collapsible-body">
             <div class="collection">

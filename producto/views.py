@@ -14,7 +14,8 @@ from django.core.paginator import Paginator
 from .models import Producto, Marca
 from usuario.models import Usuario
 from usuario.utils import regex, get_url, get_namespace, get_objects
-from .forms import ProductoForm, BusquedaForm
+from .forms import ProductoForm, BusquedaForm, BusquedaProductoForm
+from usuario.forms import FormBusquedaCliente
 
 
 class CreacionProducto(LoginRequiredMixin, CreateView):
@@ -26,7 +27,7 @@ class CreacionProducto(LoginRequiredMixin, CreateView):
     model = Producto
     form_class = ProductoForm
     template_name = 'producto/crear_producto.html'
-    success_url = reverse_lazy('usuario:admin_home')
+    success_url = reverse_lazy('usuario:admin_listar_productos')
     login_url = reverse_lazy('usuario:iniciar_sesion')
 
     def get(self, request, *args, **kwargs):
@@ -248,3 +249,13 @@ class EliminacionProducto(LoginRequiredMixin, DeleteView):
             return super(EliminacionProducto, self).post(request, *args, **kwargs)
         else:
             raise PermissionDenied
+
+
+def crear_factura(request):
+
+    context = {
+        'form_cliente': FormBusquedaCliente(),
+        'form_producto': BusquedaProductoForm()
+    }
+
+    return render(request, 'factura/crear_factura.html', context)
