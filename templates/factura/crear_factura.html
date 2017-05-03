@@ -5,43 +5,6 @@
 
 {% block menuopciones %}
 {% include 'usuario/vendedor/menu_vendedor.html' %}
-
-<!-- Modal Trigger -->
-<a class="waves-effect waves-light btn" href="#modal-buscar-cliente">Agregar cliente</a>
-
-<!-- Modal Structure -->
-<div id="modal-buscar-cliente" class="modal">
-    <div class="modal-content">
-        <div class="collection-header blue darken-1">
-            <h5 class="center white-text">
-                <i class="material-icons">assignment_ind</i>
-                Cliente
-            </h5>
-        </div>
-        <div class="collection-item">
-            <form id="form-buscar-cliente" action="" method="POST"> {% csrf_token %}
-                {{ form_cliente }}
-                <button id="btn-buscar-cliente" class="btn-floating waves-effect waves-light blue darken-1" type="submit"><i class="material-icons">search</i></button>
-                <a href="#" id="btn-agregar-cliente" class="btn-floating waves-effect waves-light red darken-1"><i class="material-icons">add</i></a>
-                <span id="respuesta-busqueda-cliente"></span>
-            </form>
-            <div class="preloader-wrapper small active">
-                    <div class="spinner-layer spinner-green-only">
-                      <div class="circle-clipper left">
-                        <div class="circle"></div>
-                      </div><div class="gap-patch">
-                        <div class="circle"></div>
-                      </div><div class="circle-clipper right">
-                        <div class="circle"></div>
-                      </div>
-                    </div>
-                 </div>
-            </div>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-    </div>
-</div>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -56,7 +19,6 @@
     Crear Factura
 </a>
 {% endblock %}
-
 
 {% block contenido %}
 {% include 'mensajes.html' %}
@@ -81,7 +43,17 @@
     <div class="row">
         <div class="col s12">
             <div class="columna contenedor-info-cliente">  <!--- Información Cliente -->
-                <h6>Cliente:</h6>
+                <div>
+                    <h5>
+                        Cliente:
+                        <!-- Modal Trigger Buscar Cliente -->
+                        <a class="waves-effect waves-light btn-floating blue darken-1" href="#modal-buscar-cliente">
+                            <i class="material-icons">add</i>
+                        </a>
+                    </h5>
+                    {% include 'modal-agregar-cliente.html' %}
+                    {% include 'modal-buscar-cliente.html' %}
+                </div>
                 <div id="cedula-cliente" class="texto-factura"></div>
                 <div id="nombre-cliente" class="texto-factura"></div>
                 <div id="direccion-cliente" class="texto-factura"></div>
@@ -96,7 +68,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row"> <!-- Detalle factura -->
         <div class="col s12">
             <h5>Detalle Factura</h5>
             <table class="responsive-table">

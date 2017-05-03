@@ -12,6 +12,7 @@ from .views import (
     HomeAdmin,
     HomeVendedor,
     buscar_cliente,
+    registrar_cliente,
 )
 
 from producto.views import (
@@ -44,6 +45,7 @@ urlpatterns = [
         ActualizacionCliente.as_view(), name='vendedor_editar_cliente'),
     url(r'^usuario/vendedor/factura/crear$', crear_factura, name='crear_factura'),
     url(r'^usuario/vendedor/factura/buscar-cliente$', buscar_cliente, name='buscar_cliente'),
+    url(r'^usuario/vendedor/factura/registrar-cliente$', registrar_cliente, name='registrar_cliente'),
     url(r'^cuentas/registrar$', RegistroVendedor.as_view(), name='registrar_vendedor'),
     url(r'^cuentas/registrar/success$',
         TemplateView.as_view(template_name='usuario/autenticacion/registro_success.html'),

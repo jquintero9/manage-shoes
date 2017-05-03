@@ -15,6 +15,7 @@ from .models import Producto, Marca
 from usuario.models import Usuario
 from usuario.utils import regex, get_url, get_namespace, get_objects
 from .forms import ProductoForm, BusquedaForm, BusquedaProductoForm
+from usuario.forms import ClienteForm
 from usuario.forms import FormBusquedaCliente
 
 
@@ -255,7 +256,9 @@ def crear_factura(request):
 
     context = {
         'form_cliente': FormBusquedaCliente(),
-        'form_producto': BusquedaProductoForm()
+        'form_producto': BusquedaProductoForm(),
+        'form': ClienteForm(),
+        'agregar_cliente': True
     }
 
     return render(request, 'factura/crear_factura.html', context)

@@ -134,3 +134,9 @@ div.contenedor-info-vendedor {
 
 div#contenedor-factura,
 div#header-factura { border: 1px solid #DDD; }
+
+/* Estilos de los elementos preloader de las ventanas modales. */
+div#preloader-buscar-cliente,
+div#respuesta-busqueda-cliente,
+div#preloader-agregar-cliente,
+.oculto { display: none; }

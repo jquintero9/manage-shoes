@@ -490,7 +490,6 @@ def buscar_cliente(request):
     if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
         if request.method == 'POST':
             datos = json.loads(request.body)
-            print datos
             form = FormBusquedaCliente(data=datos)
 
             if form.is_valid():
@@ -523,5 +522,29 @@ def buscar_cliente(request):
                 }
 
             return HttpResponse(json.dumps(response))
+    else:
+        raise PermissionDenied
+
+
+def registrar_cliente(request):
+    if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+        data = json.loads(request.body)
+        form = ClienteForm(data=data)
+
+        if form.is_valid():
+            cliente = form.save()
+            response = {
+                'response': 'success',
+                'id': cliente.id,
+                'cedula': cliente.cedula,
+                'nombre': cliente.nombre_completo(),
+                'ciudad': cliente.ciudad.get_nombre(),
+                'telefono': cliente.telefono,
+                'direccion': cliente.direccion
+            }
+        else:
+            response = {'response': 'error', 'errors': form.errors}
+
+        return HttpResponse(json.dumps(response))
     else:
         raise PermissionDenied

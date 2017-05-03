@@ -1,0 +1,27 @@
+<!-- Modal Structure Agregar Cliente -->
+<div id="modal-agregar-cliente" class="modal">
+    <div class="modal-content">
+        <form id="form-agregar-cliente" class="z-depth-1 col s12" action="" method="POST"> {% csrf_token %}
+            <h3 class="center blue-text text-darken-3 ">
+                <i class="material-icons center medium">note_add</i>
+                Crear Cliente
+            </h3>
+             {% include 'usuario/cliente/form_cliente.html' %}
+            <div id="last-row" class="row">
+                <div class="input-field col s12 m7"> <!-- Botón Submit -->
+                    <button id="btn-agregar-cliente" class="btn waves-effect waves-light" type="submit">Crear
+                        <i class="material-icons right">send</i>
+                    </button>
+                    <div id="preloader-agregar-cliente"> <!-- Preloader -->
+                        <div class="progress">
+                            <div class="indeterminate"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cerrar</a>
+    </div>
+</div>
