@@ -168,6 +168,9 @@ class Producto(models.Model):
     def get_absolute_url_delete(self):
         return reverse_lazy('usuario:eliminar_producto', kwargs={'pk': self.id})
 
+    def nombre_factura(self):
+        return '(%s) %s' % (self.marca.nombre, self.nombre)
+
 
 class Factura(models.Model):
 

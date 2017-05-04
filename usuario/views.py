@@ -516,9 +516,10 @@ def buscar_cliente(request):
                         "mensaje": u"El cliente no existe."
                     }
             else:
+                print form.errors
                 response = {
                     "response": "error-form",
-                    "mensaje": u"El número de cédula no es válido"
+                    "mensaje": form.errors['cedula'][0]
                 }
 
             return HttpResponse(json.dumps(response))

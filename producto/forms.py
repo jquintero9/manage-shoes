@@ -56,7 +56,7 @@ class BusquedaProductoForm(forms.Form):
 
     referencia = forms.CharField(
         max_length=6,
-        widget=forms.TextInput(attrs={'type': 'search', 'placeholder': 'Ingrese el ID del producto'}),
+        widget=forms.TextInput(attrs={'placeholder': 'Ingrese el ID del producto'}),
         validators=[
             RegexValidator(regex=regex['id_referencia'], message=error_messages['id_referencia'])
         ]

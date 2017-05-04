@@ -47,12 +47,12 @@
                     <h5>
                         Cliente:
                         <!-- Modal Trigger Buscar Cliente -->
-                        <a class="waves-effect waves-light btn-floating blue darken-1" href="#modal-buscar-cliente">
+                        <a class="btn btn-floating blue darken-1 pulse" href="#modal-buscar-cliente">
                             <i class="material-icons">add</i>
                         </a>
                     </h5>
-                    {% include 'modal-agregar-cliente.html' %}
-                    {% include 'modal-buscar-cliente.html' %}
+                    {% include 'factura/modal-agregar-cliente.html' %}
+                    {% include 'factura/modal-buscar-cliente.html' %}
                 </div>
                 <div id="cedula-cliente" class="texto-factura"></div>
                 <div id="nombre-cliente" class="texto-factura"></div>
@@ -70,25 +70,54 @@
     </div>
     <div class="row"> <!-- Detalle factura -->
         <div class="col s12">
-            <h5>Detalle Factura</h5>
-            <table class="responsive-table">
+            <h5>
+                Detalle Factura
+                <a class="waves-effect waves-light btn-floating blue darken-1" href="#modal-buscar-producto">
+                    <i class="material-icons">add</i>
+                </a>
+            </h5>
+            {% include 'factura/modal-buscar-producto.html' %}
+            <table id="body-factura" class="responsive-table">
                 <thead>
                     <tr>
                         <th>CANT</th>
+                        <th>REFERENCIA</th>
                         <th>PRODUCTO</th>
-                        <th>VR. UNIT</th>
-                        <th>VR. TOTAL</th>
+                        <th>PRECIO UNIT.</th>
+                        <th>TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
                 <tr>
+                    <td>3</td>
+                    <td>AD3939</td>
+                    <td>Adias F50</td>
+                    <td>$280.000</td>
+                    <td>$560.000</td>
+                </tr>
+                <tr>
                     <td>2</td>
+                    <td>AD3939</td>
+                    <td>Adias F50</td>
+                    <td>$280.000</td>
+                    <td>$560.000</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>AD3939</td>
                     <td>Adias F50</td>
                     <td>$280.000</td>
                     <td>$560.000</td>
                 </tr>
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col s12">
+                    <div><span class="right-align">Iva</span></div>
+                    <div><span class="right-align">Subtotal</span></div>
+                    <div><span class="right-align">Total a Pagar</span></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

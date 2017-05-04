@@ -1,0 +1,75 @@
+<!-- Modal Structure -->
+<div id="modal-buscar-producto" class="modal">
+    <div class="modal-content">
+        <div id="collection-buscar-producto" class="collection with-header col s12">
+            <div class="collection-header blue darken-1">
+                <h5 class="white-text center">
+                    <i class="material-icons">shopping_cart</i>
+                    Producto
+                </h5>
+            </div>
+            <div class="collection-item">
+                <form id="form-buscar-producto" class="col s12 m6" action="" method="POST"> {% csrf_token %}
+                    <div class="input-field">
+                        {{ form_producto.referencia }}
+                        <label for="id_referencia">Referencia producto</label>
+                         <div id="respuesta-busqueda-producto" class="message-input oculto"></div>
+                         <div>
+                            <button id="btn-buscar-producto" class="btn waves-effect waves-light blue darken-1" type="submit">Buscar<i class="material-icons right">search</i></button>
+                            <div id="preloader-buscar-producto" class="oculto"> <!-- Preloader -->
+                                <div class="progress">
+                                    <div class="indeterminate blue"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <form id="form-agregar-producto" class="col s12 m6" action="" method="POST"> {% csrf_token %}
+                    <div class="row">
+                        <h5 class="center-align">Detalle del producto</h5>
+                        <div class="row">
+                            <div class="col s12 m6"><span><b>Marca: </b></span></div>
+                            <div id="marca-producto" class="col s12 m6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12 m6"><span><b>Nombre: </b></span></div>
+                            <div id="nombre-producto" class="col s12 m6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12 m6"><span><b>Precio: </b></span></div>
+                            <div id="precio-producto" class="col s12 m6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12 m6"><span><b>Stock: </b></span></div>
+                            <div id="stock-producto" class="col s12 m6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                <label for="input-cantidad">Cantidad</b></label>
+                                <input type="hidden" value="" name="referencia" />
+                                <select id="input-cantidad" class="browser-default" name="cantidad" disabled>
+                                    <option value="">0</option>
+                                </select>
+                                <div id="respuesta-agregar-producto" class="message-input oculto"></div>
+                            </div>
+                            <div class="col s12">
+                                <button id="btn-agregar-producto" href="#" class="btn waves-effect waves-light blue darken-1 disabled" type="submit">
+                                    Agregar
+                                    <i class="material-icons right">shopping_cart</i>
+                                </button>
+                                <div id="preloader-agregar-producto" class="oculto"> <!-- Preloader -->
+                                <div class="progress">
+                                    <div class="indeterminate blue"></div>
+                                </div>
+                            </div>
+                            </div> 
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancelar</a>
+    </div>
+</div>

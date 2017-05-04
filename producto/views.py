@@ -2,6 +2,9 @@
 # coding: latin-1
 
 import re
+import json
+from django.http import HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -262,3 +265,43 @@ def crear_factura(request):
     }
 
     return render(request, 'factura/crear_factura.html', context)
+
+
+def buscar_producto(request):
+    if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+        if request.method == 'POST':
+            datos = json.loads(request.body)
+            print datos
+            form = BusquedaProductoForm(data=datos)
+
+            if form.is_valid():
+                try:
+                    producto = Producto.objects.get(id_referencia=form.cleaned_data.get('referencia'))
+                except ObjectDoesNotExist:
+                    producto = None
+
+                if producto is not None:
+                    response = {
+                        'response': 'success',
+                        'id': producto.id,
+                        'referencia': producto.id_referencia,
+                        'nombre': producto.nombre,
+                        'marca': producto.marca.nombre,
+                        'precio': producto.precio,
+                        'stock': producto.stock
+                    }
+                else:
+                    response = {
+                        'response': 'empty',
+                        'mensaje': u'El producto no existe.'
+                    }
+            else:
+                response = {
+                    'response': 'error_form',
+                    'mensaje': form.errors['referencia'][0]
+                }
+
+            return HttpResponse(json.dumps(response))
+
+    else:
+        raise PermissionDenied

@@ -94,8 +94,8 @@ img.logo-header {
 que contienen los forumularos,
 para buscar cliente y productos.
  */
-#btn-buscar-cliente,
-#btn-agregar-cliente {  }
+#btn-buscar-producto { margin-top: 16px; }
+
 
 div#collection-buscar-cliente,
 div#collection-buscar-producto {
@@ -140,3 +140,12 @@ div#preloader-buscar-cliente,
 div#respuesta-busqueda-cliente,
 div#preloader-agregar-cliente,
 .oculto { display: none; }
+
+table#body-factura {
+    max-height: 200px;
+    overflow: scroll;
+}
+
+select#input-cantidad {
+    width: 50px;
+}

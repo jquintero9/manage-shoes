@@ -133,5 +133,6 @@ class FormBusquedaCliente(forms.Form):
     cedula = forms.CharField(
         max_length=10,
         widget=forms.TextInput(attrs={'placeholder': u'Ingrese el número de cédula'}),
-        validators=[RegexValidator(regex=regex['cedula'], message=error_messages['cedula'])]
+        validators=[RegexValidator(regex=regex['cedula'], message=error_messages['cedula'])],
+        error_messages={'required': u'¿Cúal es el número de cédula?'}
     )
