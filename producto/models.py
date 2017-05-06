@@ -216,7 +216,7 @@ class DetalleFactura(models.Model):
         }
     )
 
-    valor = models.PositiveIntegerField(
+    total = models.PositiveIntegerField(
         validators=[
             RegexValidator(regex=regex['numero'], message=error_messages['numero'])
         ],

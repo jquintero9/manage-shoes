@@ -50,14 +50,17 @@ def enviar_email(email, nombre):
 
     subject = 'Manage Shoes - Tu cuenta ha sido activada.'
 
-    send_mail(
-        subject=subject,
-        message='Tu cuenta ha sido activada.',
-        from_email=settings.EMAIL_HOST_USER,
-        recipient_list=[email],
-        fail_silently=True,
-        html_message=html_message
-    )
+    try:
+        send_mail(
+            subject=subject,
+            message='Tu cuenta ha sido activada.',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[email],
+            fail_silently=True,
+            html_message=html_message
+        )
+    except:
+        pass
 
 
 def get_prefix(request):

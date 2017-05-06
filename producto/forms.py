@@ -62,3 +62,21 @@ class BusquedaProductoForm(forms.Form):
         ]
     )
 
+
+class AgregarProductoForm(forms.Form):
+
+    cantidad = forms.IntegerField(
+        min_value=1,
+        max_value=999,
+        error_messages={'required': u'¿Cuantos productos se van a comprar?'}
+    )
+    referencia = forms.CharField(
+        max_length=6,
+        widget=forms.TextInput(),
+        validators=[
+            RegexValidator(regex=regex['id_referencia'], message=error_messages['id_referencia'])
+        ]
+    )
+
+
+

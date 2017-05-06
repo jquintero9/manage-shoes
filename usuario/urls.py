@@ -21,7 +21,8 @@ from producto.views import (
     ActualizacionProducto,
     EliminacionProducto,
     crear_factura,
-    buscar_producto
+    buscar_producto,
+    agregar_producto_factura,
 )
 
 urlpatterns = [
@@ -48,6 +49,7 @@ urlpatterns = [
     url(r'^usuario/vendedor/factura/buscar-cliente$', buscar_cliente, name='buscar_cliente'),
     url(r'^usuario/vendedor/factura/registrar-cliente$', registrar_cliente, name='registrar_cliente'),
     url(r'^usuario/vendedor/factura/buscar-producto$', buscar_producto, name='buscar_producto'),
+    url(r'^usuario/vendedor/factura/agregar-producto$', agregar_producto_factura, name='agregar_producto_factura'),
     url(r'^cuentas/registrar$', RegistroVendedor.as_view(), name='registrar_vendedor'),
     url(r'^cuentas/registrar/success$',
         TemplateView.as_view(template_name='usuario/autenticacion/registro_success.html'),

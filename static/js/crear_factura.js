@@ -1,5 +1,106 @@
 
 $(document).ready(function() {
+	
+	var l = Array("hola");
+	
+	var s = "mundo";
+	var indice = undefined;
+
+	console.log(l);
+
+	/*for (var i = 0; i < l.length; i++) {
+		if (l[i] === s) {
+			indice = i;
+			break;
+		}
+	}
+	*/
+
+	l.splice(0, 1);
+
+	console.log(l);
+
+	function closeIt()
+	{ return "";}
+
+	window.onbeforeunload = closeIt;
+
+	function ListaDetalle() {
+		this.lista = new Array();
+
+		this.agregarDetalle = function(detalle) {
+			this.lista.push(detalle);
+		}
+
+		this.eliminarDetalle = function(referencia) {
+			if (this.lista.length > 0) {
+				var indiceEliminar = -1;
+
+				for (var i = 0; i < this.lista.length; i++) {
+					console.log("---------------------");
+					console.log("ref1: " + this.lista[i].referencia);
+					console.log("ref2: " + referencia);
+
+					if (this.lista[i].referencia == referencia) {
+						indiceEliminar = i;
+						console.log("incideEliminar: " + indiceEliminar);
+						break;
+					}
+					console.log("---------------------");
+				}
+
+				if (indiceEliminar >= 0) {
+					this.lista.splice(indiceEliminar, 1);
+					console.log('eliminado');
+				}
+
+				console.log("Numero de detalles: " + this.lista.length);
+			}
+		}
+
+		this.getDetalle = function(referencia) {
+			var detalle = null;
+			
+			if (this.lista.length > 0) {
+
+				for (detalle in this.lista) {
+					if (this.lista[detalle].referencia === referencia) {
+						detalle = this.lista[detalle];
+					}
+				}
+			}
+
+			console.log("getDetalle");
+				console.log(detalle);
+			
+			return detalle;
+		}
+
+		this.existe = function(referencia) {
+			var existe = false;
+			
+			if (this.lista.length > 0) {
+
+				for (detalle in this.lista) {
+					if (this.lista[detalle].referencia === referencia) {
+						existe = true;
+					}
+				}
+			}
+			
+			return existe;
+		}
+
+	}
+
+	function DetalleFactura(id, referencia, nombre, precio, stock) {
+		this.id = id || "";
+		this.referencia = referencia || "";
+		this.nombre = nombre || "";
+		this.precio = precio || 0;
+		this.stock = stock || 0;
+	}
+
 	/********** VARIABLES DEL COMPONENTE BUSCAR Y AGREGAR CLIENTE **********/
 
 	/****** Elementos que componen la ventana modal buscar cliente. *****/
@@ -44,14 +145,17 @@ $(document).ready(function() {
 
 	/* Este formulario envía una petición para agregar un nuevo producto a la factura. */
 	$formAgregarProducto = $('form#form-agregar-producto');
-	/* En este input se muestran la cantidad de productos que van a ser comprados */
-	$cantidadProducto = $('select#input-cantidad');
 	/*Botón para realizar para enviar el formulario*/
 	$btnAgregarProducto = $('button#btn-agregar-producto');
 	//Contenedor para mostrar los mensajes del formulario.
 	$respuestaAgregarProducto = $('div#respuesta-agregar-producto');
 	//preloader
 	$preloaderAgregarProducto = $('div#preloader-agregar-producto');
+	//Detalle de la factura.
+	$detalleFactura = $('#body-factura');
+
+	listaDetalle = new ListaDetalle();
+	objetoBusquedaProducto = null;
 	
 
 	/********** DEFINICIÓN DE FUNCIONES **********/
@@ -65,7 +169,7 @@ $(document).ready(function() {
 		for (campo in valores) {
 			try {
 				contenedores[campo].text(valores[campo]).fadeIn();
-			} catch(err) {console.log(err)}
+			} catch(err) {}
 		}
 	}
 
@@ -168,7 +272,7 @@ $(document).ready(function() {
 			if (data.response === 'success') {
 				console.log('ok...');
 				console.log(data);
-				mostrarInfoCliente(data);
+				mostrarInfo($infoCliente, data);
 				$modalAgregarCliente.modal('close');
 				$modalBuscarCliente.modal('close');
 				$formAgregarCliente[0].reset();
@@ -188,6 +292,20 @@ $(document).ready(function() {
 		enviarPeticionAJAX(datos, 'registrar-cliente', this['csrfmiddlewaretoken'].value, procesarRespuestaAgregarCliente);
 	});
 
+	function desactivarBotonAgregar() {
+		$btnAgregarProducto.addClass('disabled');
+	}
+
+	function activarBotonAgregar() {
+		$btnAgregarProducto.removeClass('disabled');
+	}
+
+	function ocultarInfoProducto() {
+		for (campo in $infoProducto) {
+			$infoProducto[campo].fadeOut();
+		}
+	}
+
 
 	/***** FORMULARIO BUSCAR PRODUCTO *****/
 
@@ -198,20 +316,10 @@ $(document).ready(function() {
 		$btnBuscarProducto.addClass('disabled');
 		//Se muestra el preloader de buscar producto.
 		$preloaderBuscarProducto.fadeIn(500);
+		$respuestaAgregarProducto.fadeOut();
 
 		//Se obtienen los datos del formulario.
 		dato = {'referencia': this['referencia'].value}
-
-		function desactivarBotonAgregar() {
-			$cantidadProducto.prop({'disabled': true}).html("");
-			$btnAgregarProducto.addClass('disabled');
-		}
-
-		function ocultarInfoProducto() {
-			for (campo in $infoProducto) {
-				$infoProducto[campo].fadeOut();
-			}
-		}
 
 		/*
 		Esta función procesa la respuesta del servidor.
@@ -224,17 +332,9 @@ $(document).ready(function() {
 				mostrarInfo($infoProducto, data);
 				$respuestaBuscarProducto.fadeOut();
 
-				var options = "";
-
 				if (data.stock > 0) {
-					for (var i = 1; i < data.stock + 1; i++) {
-						options += "<option value='" + i + "'>" + i + "</option>";
-					}
-					$cantidadProducto.html(options);
-
-					$cantidadProducto.prop({'disabled': false});
-					$btnAgregarProducto.removeClass('disabled');
-					$formAgregarProducto[0]['referencia'].value = data.referencia;
+					activarBotonAgregar();
+					objetoBusquedaProducto = new DetalleFactura(data.id, data.referencia, data.nombre, data.precio, data.stock);
 				}
 				else {
 					$respuestaBuscarProducto.text('No hay unidades disponibles.').fadeIn();
@@ -254,29 +354,95 @@ $(document).ready(function() {
 		enviarPeticionAJAX(dato, 'buscar-producto', this['csrfmiddlewaretoken'].value,procesarRespuestaBuscarProducto);
 	});
 
+	function generarSelectCantidad(referencia, stock) {
+		var $select = $("<select id='select-" + referencia + "' name='" + referencia + "' class='browser-default'></select>");
+		$select.append("<option value='1' selected>1</option>");
 
-	/***** FORMULARIO BUSCAR PRODUCTO *****/
-	$formAgregarProducto.on('submit', function(event) {
-		//Se evita que la página se recargue.
-		event.preventDefault();
-		//Se desactiva el botón que envía el formulario, para evitar multiples peticiones.
-		$btnAgregarProducto.addClass('disabled');
-		//Se activa el preloader
-		$preloaderAgregarProducto.fadeIn();
+		if (stock > 1) {
+			for (var i = 2; i <= stock; i++) {
 
-		//datos que se serán enviados al servidor.
-		datos = {
-			"cantidad": this['cantidad'].value,
-			"referencia": this['referencia'].value
-		}
-
-		/* Esta función procesa la respuesta del servidor */
-		function procesarRespuestaAgregarProducto(data) {
-			if (data.response === 'success') {
-
+				$select.append("<option value='" + i + "'>" + i + "</option>");
 			}
 		}
 
-	});
+		$select.on('blur', function(event) {
+			var $precioDetalle = $('input#precio-' + referencia);
+			var $totalDetalle = $('input#total-' + referencia);
+			var cantidad = Number(this.value);
+			var precio = Number($precioDetalle.val());
+			$totalDetalle.val(cantidad * precio);
+		});
 
+		return $("<td class='select-cantidad'></td>").append($select);
+	}
+
+	function eliminarDetalle(event) {
+		var referencia = this.dataset.referencia;
+		var $tr = $('tr#' + referencia).remove();
+
+		listaDetalle.eliminarDetalle(referencia);
+	}
+
+	function crearBotonEliminarDetalle(referencia) {
+		var $botonEliminar = $("<a class='btn btn-floating red darken-1' data-referencia='" + referencia + "'><i class='material-icons'>delete</i></a>");
+		$botonEliminar.on('click', eliminarDetalle);
+
+		return $('<td></td>').append($botonEliminar);
+	}
+
+	function clonarObjeto() {
+		var objectoClone = null;
+
+		if (objetoBusquedaProducto != null) {
+			objetoClone = new DetalleFactura(
+				objetoBusquedaProducto.id,
+				objetoBusquedaProducto.referencia,
+				objetoBusquedaProducto.nombre,
+				objetoBusquedaProducto.precio,
+				objetoBusquedaProducto.stock
+			);
+		}
+
+		return objetoClone;
+	}
+
+	function agregarProductoFactura(event) {
+
+		if (objetoBusquedaProducto != null) {
+			if (!listaDetalle.existe(objetoBusquedaProducto.referencia)) {
+				console.log("Agregando detalle...");
+				nuevoDetalle = clonarObjeto(objetoBusquedaProducto);
+				objetoBusquedaProducto = null;
+
+				var $tr =$("<tr id='" + nuevoDetalle.referencia + "'></tr>");
+				$tr.append(crearBotonEliminarDetalle(nuevoDetalle.referencia));
+				$tr.append(generarSelectCantidad(nuevoDetalle.referencia, nuevoDetalle.stock));
+				$tr.append("<td>"+ nuevoDetalle.referencia + "</td>");
+				$tr.append("<td>" + nuevoDetalle.nombre + "</td>");
+				$tr.append("<td class='precio-detalle'><input id='precio-" + nuevoDetalle.referencia + "' type='text' value='" + nuevoDetalle.precio + "' readonly /></td>");
+				$tr.append("<td class='precio-detalle'><input id='total-" + nuevoDetalle.referencia + "' value='"+ nuevoDetalle.precio + "' readonly /></td>");
+				$detalleFactura.append($tr);
+
+				listaDetalle.agregarDetalle(nuevoDetalle);
+				console.log(listaDetalle);
+				$modalBuscarProducto.modal('close');
+				$formBuscarProducto[0].reset();
+				ocultarInfoProducto();
+			}
+			else {
+				$respuestaAgregarProducto.text("Este producto ya se agrego a la factura.").fadeIn();
+			}
+		}
+		else {
+			$respuestaAgregarProducto.text("No se ha seleccionado un producto para agregar.").fadeIn();
+		}
+
+		desactivarBotonAgregar();
+	}
+
+
+	$btnAgregarProducto.on('click', agregarProductoFactura);
+
+	/***** FORMULARIO AGREGAR DETALLE FACTURA *****/
+	
 });

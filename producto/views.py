@@ -17,7 +17,7 @@ from django.core.paginator import Paginator
 from .models import Producto, Marca
 from usuario.models import Usuario
 from usuario.utils import regex, get_url, get_namespace, get_objects
-from .forms import ProductoForm, BusquedaForm, BusquedaProductoForm
+from .forms import ProductoForm, BusquedaForm, BusquedaProductoForm, AgregarProductoForm
 from usuario.forms import ClienteForm
 from usuario.forms import FormBusquedaCliente
 
@@ -305,3 +305,62 @@ def buscar_producto(request):
 
     else:
         raise PermissionDenied
+
+
+def agregar_producto_factura(request):
+    if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+        if request.method == 'POST':
+            datos = json.loads(request.body)
+            form = AgregarProductoForm(data=datos)
+
+            if form.is_valid():
+                try:
+                    producto = Producto.objects.get(id_referencia=form.cleaned_data.get('referencia'))
+                except ObjectDoesNotExist:
+                    producto = None
+
+                if producto is not None:
+                    cantidad = int(form.cleaned_data.get('cantidad'))
+
+                    if cantidad >= 1 and cantidad <= producto.stock:
+                        detalle = "<tr>"
+                        detalle += "<td>" + str(cantidad) +  "</td>"
+                        detalle += "<td>" + producto.id_referencia + "</td>"
+                        detalle += "<td>" + producto.nombre_factura() + "</td>"
+                        detalle += "<td>" + str(producto.precio) + "</td>"
+                        detalle += "<td>" + str(producto.precio * cantidad) + "</td></tr>"
+
+                        response = {
+                            "id": producto.id,
+                            "referencia": producto.id_referencia,
+                            "cantidad": cantidad,
+                            "nombre": producto.nombre_factura(),
+                            "precio": producto.precio,
+                            "total": producto.precio * cantidad,
+                            "response": 'success',
+                            "detalle": detalle
+                        }
+                    else:
+                        mensaje = u'La cantidad(%d) no es válida. <b>stock(%d)</b>' % (cantidad, producto.stock)
+                        response = {
+                            "mensaje": mensaje,
+                            "response": 'error'
+                        }
+            else:
+                mensaje = ""
+                try:
+                    mensaje += "- " + form.errors['cantidad'][0]
+                    mensaje += "<br/>" + "- " + form.errors['referencia'][0]
+                except:
+                    pass
+
+                response = {
+                    "response": 'error_form',
+                    "mensaje": mensaje
+                }
+
+            return HttpResponse(json.dumps(response))
+    else:
+        raise PermissionDenied
+
+

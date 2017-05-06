@@ -28,7 +28,7 @@ class FacturaAdmin(admin.ModelAdmin):
 
 class DetalleFacturaAdmin(admin.ModelAdmin):
 
-    list_display = ['id', 'factura', 'producto', 'cantidad', 'valor']
+    list_display = ['id', 'factura', 'producto', 'cantidad', 'total']
 
     class Meta:
         model = DetalleFactura

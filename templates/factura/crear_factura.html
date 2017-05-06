@@ -77,9 +77,10 @@
                 </a>
             </h5>
             {% include 'factura/modal-buscar-producto.html' %}
-            <table id="body-factura" class="responsive-table">
+            <table class="responsive-table striped">
                 <thead>
                     <tr>
+                        <th>ACCIÓN</th>
                         <th>CANT</th>
                         <th>REFERENCIA</th>
                         <th>PRODUCTO</th>
@@ -87,28 +88,7 @@
                         <th>TOTAL</th>
                     </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>3</td>
-                    <td>AD3939</td>
-                    <td>Adias F50</td>
-                    <td>$280.000</td>
-                    <td>$560.000</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>AD3939</td>
-                    <td>Adias F50</td>
-                    <td>$280.000</td>
-                    <td>$560.000</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>AD3939</td>
-                    <td>Adias F50</td>
-                    <td>$280.000</td>
-                    <td>$560.000</td>
-                </tr>
+                <tbody id="body-factura">
                 </tbody>
             </table>
             <div class="row">

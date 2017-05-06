@@ -141,11 +141,8 @@ div#respuesta-busqueda-cliente,
 div#preloader-agregar-cliente,
 .oculto { display: none; }
 
-table#body-factura {
-    max-height: 200px;
-    overflow: scroll;
-}
+td.select-cantidad { width: 64px; }
 
-select#input-cantidad {
-    width: 50px;
-}
+td.precio-detalle  { width: 96px; }
+
+
