@@ -20,7 +20,7 @@ class ProductoAdmin(admin.ModelAdmin):
 
 class FacturaAdmin(admin.ModelAdmin):
 
-    list_display = ['id', 'cliente', 'fecha', 'total_pagar']
+    list_display = ['id', 'cliente', 'vendedor', 'fecha', 'total_pagar']
 
     class Meta:
         model = Factura

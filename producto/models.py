@@ -29,8 +29,6 @@ class Marca(models.Model):
 
     class Meta:
         db_table = 'marcas'
-        verbose_name = 'marca'
-        verbose_name_plural = 'marcas'
         ordering = ['nombre']
 
     def __unicode__(self):
@@ -128,7 +126,7 @@ class Producto(models.Model):
             RegexValidator(regex=regex['estilo'], message=error_messages['estilo'])
         ],
         error_messages={
-            'required': u'¿Cuál es el estilo?'
+            'required': u'¿Cúal es el estilo?'
         },
         choices=ESTILO
     )
@@ -197,7 +195,7 @@ class Factura(models.Model):
         ordering = ['-fecha']
 
     def __unicode__(self):
-        return '%s - %s' % (self.cliente.nombre_completo(), self.fecha)
+        return '%s ' % self.id
 
 
 class DetalleFactura(models.Model):
@@ -231,10 +229,12 @@ class DetalleFactura(models.Model):
 
     class Meta:
         db_table = 'detalle_facturas'
+        verbose_name = 'detalle'
+        verbose_name_plural = 'detalles'
         unique_together = (('factura', 'producto'),)
 
     def __unicode__(self):
-        return self.producto
+        return self.producto.nombre
 
 
 
