@@ -4,7 +4,7 @@
 from django import forms
 from django.core.validators import RegexValidator
 from usuario.utils import regex, error_messages
-from .models import Producto, Marca
+from .models import Producto, Marca, DetalleFactura, Factura
 
 
 class ProductoForm(forms.ModelForm):
@@ -77,6 +77,20 @@ class AgregarProductoForm(forms.Form):
             RegexValidator(regex=regex['id_referencia'], message=error_messages['id_referencia'])
         ]
     )
+
+
+class FacturaForm(forms.ModelForm):
+
+    class Meta:
+        model = Factura
+        fields = ['cliente', 'vendedor']
+
+
+class DetalleFacturaForm(forms.ModelForm):
+
+    class Meta:
+        model = DetalleFactura
+        fields = ['producto', 'cantidad', 'factura']
 
 
 

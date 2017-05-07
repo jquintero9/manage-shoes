@@ -20,7 +20,7 @@ from producto.views import (
     ListaProducto,
     ActualizacionProducto,
     EliminacionProducto,
-    crear_factura,
+    Facturacion,
     buscar_producto,
     agregar_producto_factura,
 )
@@ -45,7 +45,7 @@ urlpatterns = [
     url(r'^usuario/vendedor/cliente/lista$', ListaCliente.as_view(), name='vendedor_listar_clientes'),
     url(r'^usuario/vendedor/cliente/(?P<pk>\d+)/editar$',
         ActualizacionCliente.as_view(), name='vendedor_editar_cliente'),
-    url(r'^usuario/vendedor/factura/crear$', crear_factura, name='crear_factura'),
+    url(r'^usuario/vendedor/factura/crear$', Facturacion.as_view(), name='crear_factura'),
     url(r'^usuario/vendedor/factura/buscar-cliente$', buscar_cliente, name='buscar_cliente'),
     url(r'^usuario/vendedor/factura/registrar-cliente$', registrar_cliente, name='registrar_cliente'),
     url(r'^usuario/vendedor/factura/buscar-producto$', buscar_producto, name='buscar_producto'),

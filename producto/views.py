@@ -14,10 +14,17 @@ from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.core.paginator import Paginator
-from .models import Producto, Marca
+from .models import Producto, Marca, DetalleFactura, Factura
 from usuario.models import Usuario
 from usuario.utils import regex, get_url, get_namespace, get_objects
-from .forms import ProductoForm, BusquedaForm, BusquedaProductoForm, AgregarProductoForm
+from .forms import (
+    ProductoForm,
+    BusquedaForm,
+    BusquedaProductoForm,
+    AgregarProductoForm,
+    DetalleFacturaForm,
+    FacturaForm
+)
 from usuario.forms import ClienteForm
 from usuario.forms import FormBusquedaCliente
 
@@ -255,16 +262,81 @@ class EliminacionProducto(LoginRequiredMixin, DeleteView):
             raise PermissionDenied
 
 
-def crear_factura(request):
+class Facturacion(LoginRequiredMixin, View):
 
-    context = {
-        'form_cliente': FormBusquedaCliente(),
-        'form_producto': BusquedaProductoForm(),
-        'form': ClienteForm(),
-        'agregar_cliente': True
-    }
+    template_name = 'factura/crear_factura.html'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
 
-    return render(request, 'factura/crear_factura.html', context)
+    def get(self, request):
+        if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+            context = {
+                'form_cliente': FormBusquedaCliente(),
+                'form_producto': BusquedaProductoForm(),
+                'form': ClienteForm(),
+                'agregar_cliente': True
+            }
+
+            return render(request, self.template_name, context)
+        else:
+            raise PermissionDenied
+
+    def post(self, request):
+        if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+            datos = json.loads(request.body)
+
+            datos_factura = {
+                "cliente": datos.get('cliente'),
+                "vendedor": request.user.id
+            }
+            factura_form = FacturaForm(data=datos_factura)
+
+            detalle_factura = datos.get('detalle')
+            valido = True
+
+            if factura_form.is_valid():
+                factura = factura_form.save(commit=False)
+
+                total_pagar = 0
+
+                for detalle in detalle_factura:
+                    detalle['factura'] = factura.id
+                    detalle_form = DetalleFacturaForm(data=detalle)
+
+                    if detalle_form.is_valid():
+                        """producto = Producto.objects.get(id=detalle_form.cleaned_data.get('producto'))
+
+                        nuevo_detalle = DetalleFactura(
+                            factura=factura,
+                            producto=detalle_form.cleaned_data.get('producto'),
+
+                        )
+                        """
+                        nuevo_detalle = detalle_form.save(commit=False)
+                        nuevo_detalle.total = nuevo_detalle.producto.precio * nuevo_detalle.cantidad
+                        nuevo_detalle.save()
+                        total_pagar += nuevo_detalle.total
+                    else:
+                        valido = False
+                        break
+                factura.total_pagar = total_pagar
+                factura.save()
+            else:
+                valido = False
+
+            if valido:
+                response = {
+                    "response": "success",
+                    "mensaje": u"La factura ha sido guardada correctamente."
+                }
+            else:
+                response = {
+                    "response": "error",
+                    "mensaje": u'<b>Error: </b>Ocurrio un error al procesar la solicitud.'
+                }
+
+            return HttpResponse(json.dumps(response))
+        else:
+            raise PermissionDenied
 
 
 def buscar_producto(request):
@@ -362,5 +434,12 @@ def agregar_producto_factura(request):
             return HttpResponse(json.dumps(response))
     else:
         raise PermissionDenied
+
+
+def factura(request):
+    if request.method == 'POST':
+        print request.POST
+
+    return render(request, 'factura.html', {'form': FacturaForm()})
 
 

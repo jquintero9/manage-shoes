@@ -1,32 +1,17 @@
 
 $(document).ready(function() {
-	
-	var l = Array("hola");
-	
-	var s = "mundo";
-	var indice = undefined;
-
-	console.log(l);
-
-	/*for (var i = 0; i < l.length; i++) {
-		if (l[i] === s) {
-			indice = i;
-			break;
-		}
-	}
-	*/
-
-	l.splice(0, 1);
-
-	console.log(l);
 
 	function closeIt()
 	{ return "";}
 
-	window.onbeforeunload = closeIt;
+	//window.onbeforeunload = closeIt;
 
 	function ListaDetalle() {
 		this.lista = new Array();
+
+		this.listaVacia = function() {
+			return (this.lista.length == 0);
+		}
 
 		this.agregarDetalle = function(detalle) {
 			this.lista.push(detalle);
@@ -37,24 +22,16 @@ $(document).ready(function() {
 				var indiceEliminar = -1;
 
 				for (var i = 0; i < this.lista.length; i++) {
-					console.log("---------------------");
-					console.log("ref1: " + this.lista[i].referencia);
-					console.log("ref2: " + referencia);
 
 					if (this.lista[i].referencia == referencia) {
 						indiceEliminar = i;
-						console.log("incideEliminar: " + indiceEliminar);
 						break;
 					}
-					console.log("---------------------");
 				}
 
 				if (indiceEliminar >= 0) {
 					this.lista.splice(indiceEliminar, 1);
-					console.log('eliminado');
 				}
-
-				console.log("Numero de detalles: " + this.lista.length);
 			}
 		}
 
@@ -110,12 +87,17 @@ $(document).ready(function() {
 	$preloaderBuscarCliente = $('div#preloader-buscar-cliente');
 	$respuestaBuscarCliente = $('div#respuesta-busqueda-cliente');
 	$triggerAgregarCliente = $('a#trigger-agregar-cliente');
+	$triggerBuscarCliente = $('a#trigger-buscar-cliente');
 
 	/****** Elementos que componen la ventana modal agregar cliente. ******/
 	$modalAgregarCliente = $('div#modal-agregar-cliente');
 	$formAgregarCliente = $('form#form-agregar-cliente');
 	$btnAgregarCliente = $('button#btn-agregar-cliente');
 	$preloaderAgregarCliente = $('div#preloader-agregar-cliente');
+	//Indica si el cliente ya se agrego a la factura.
+	clienteAgregado = false;
+	//Input para guardar el id del cliente.
+	$inputCliente = $('input#cliente');
 
 	/***** Elementos donde se visualizan los datos del cliente en la factura. *****/
 	$infoCliente = {
@@ -134,6 +116,7 @@ $(document).ready(function() {
 	$btnBuscarProducto = $('button#btn-buscar-producto');
 	$respuestaBuscarProducto = $('div#respuesta-busqueda-producto');
 	$preloaderBuscarProducto = $('div#preloader-buscar-producto');
+	$triggerBuscarProducto = $('a#trigger-buscar-producto');
 
 	/***** Elementeos donde se visualizan los datos del producto *****/
 	$infoProducto = {
@@ -151,12 +134,20 @@ $(document).ready(function() {
 	$respuestaAgregarProducto = $('div#respuesta-agregar-producto');
 	//preloader
 	$preloaderAgregarProducto = $('div#preloader-agregar-producto');
-	//Detalle de la factura.
-	$detalleFactura = $('#body-factura');
 
 	listaDetalle = new ListaDetalle();
 	objetoBusquedaProducto = null;
 	
+	/* Elementos del componente guardar factura. */
+	$formGuardarFactura = $('form#form-guardar-factura');
+	//Botón para guardar la factura.
+	$btnGuardarFactura = $('button#btn-guardar-factura');
+	//Detalle de la factura.
+	$detalleFactura = $('#body-factura');
+	//Contendor para mostrar los mensajes en caso de error.
+	$respuestaGuardarFactura = $('div#respuesta-guardar-factura');
+	//Preloader guardar factura.
+	$preloaderGuardarFactura = $('div#preloader-guardar-factura');
 
 	/********** DEFINICIÓN DE FUNCIONES **********/
 
@@ -165,12 +156,65 @@ $(document).ready(function() {
 	contenedores: Son los elementos donde se muestran los mensajes.
 	valores: Es la información. 
 	*/
-	function mostrarInfo(contenedores, valores) {
+	function mostrarInfo(contenedores, valores, id) {
 		for (campo in valores) {
 			try {
 				contenedores[campo].text(valores[campo]).fadeIn();
 			} catch(err) {}
 		}
+	}
+
+	function activarBotonGuardarFactura() {
+		if (clienteAgregado && !listaDetalle.listaVacia()) {
+			$btnGuardarFactura.removeClass('disabled');
+			$triggerBuscarCliente.removeClass('pulse');
+			$triggerBuscarProducto.removeClass('pulse');
+		}
+		else {
+			$btnGuardarFactura.addClass('disabled');
+		}
+
+		if (clienteAgregado) {
+			if ($triggerBuscarCliente.hasClass('pulse')) {
+				$triggerBuscarCliente.removeClass('pulse');
+			}
+		}
+		else {
+			if (!$triggerBuscarCliente.hasClass('pulse')) {
+				$triggerBuscarCliente.addClass('pulse');	
+			}
+		}
+
+		if (!listaDetalle.listaVacia()) {
+			if ($triggerBuscarProducto.hasClass('pulse')) {
+				$triggerBuscarProducto.removeClass('pulse');
+			}
+		}
+		else {
+			if (!$triggerBuscarProducto.hasClass('pulse')) {
+				$triggerBuscarProducto.addClass('pulse');
+			}
+		}
+	}
+
+	/* Esta función obtiene y retorna una lista con los ID'S y las cantidades 
+	de cada producto que hay en el detalle de la factura. */
+	function obtenerInfoDetalle() {
+		var $detalles = $('td.cantidad-productos');
+		var listaProductos = Array();
+
+		$detalles.each(function(i) {
+			console.log(this.childNodes);
+			var producto = this.childNodes[0].value;
+			var cantidad = this.childNodes[1].value;
+
+			console.log("producto: " + producto);
+			console.log("cantidad: " + cantidad);
+
+			listaProductos.push({"producto": producto, "cantidad": cantidad});
+		});
+
+		return listaProductos;
 	}
 
 	/*
@@ -193,6 +237,13 @@ $(document).ready(function() {
 
 	/********** ASIGNACIÓN DE EVENTOS **********/
 
+
+	function asignarIDCliente(id) {
+		$inputCliente.val(id);
+		clienteAgregado = true;
+		activarBotonGuardarFactura();
+	}
+
 	/***** FORMULARIO BUSCAR CLIENTE *****/
 
 	/* Esta función se ejecuta cuando el formulario de buscar cliente
@@ -208,7 +259,7 @@ $(document).ready(function() {
 		$triggerAgregarCliente.fadeOut(200);
 
 		//Datos que serán enviados al servidor.
-		dato = {
+		var dato = {
 			"cedula": this['cedula'].value
 		};
 
@@ -216,6 +267,7 @@ $(document).ready(function() {
 		function procesarRespuestaBuscarCliente(data) {
 			if (data.response == "success") {
 					mostrarInfo($infoCliente, data);
+					asignarIDCliente(data.id);
 					$modalBuscarCliente.modal('close');
 					$formBuscarCliente[0].reset();
 					$respuestaBuscarCliente.fadeOut(200);
@@ -258,7 +310,7 @@ $(document).ready(function() {
 		}
 
 		//Datos que serán enviados al servidor.
-		datos = {
+		var datos = {
 			"cedula": this['cedula'].value,
 			"nombres": this['nombres'].value,
 			"apellidos": this['apellidos'].value,
@@ -273,6 +325,7 @@ $(document).ready(function() {
 				console.log('ok...');
 				console.log(data);
 				mostrarInfo($infoCliente, data);
+				asignarIDCliente(data.id);
 				$modalAgregarCliente.modal('close');
 				$modalBuscarCliente.modal('close');
 				$formAgregarCliente[0].reset();
@@ -319,7 +372,7 @@ $(document).ready(function() {
 		$respuestaAgregarProducto.fadeOut();
 
 		//Se obtienen los datos del formulario.
-		dato = {'referencia': this['referencia'].value}
+		var dato = {'referencia': this['referencia'].value}
 
 		/*
 		Esta función procesa la respuesta del servidor.
@@ -354,8 +407,8 @@ $(document).ready(function() {
 		enviarPeticionAJAX(dato, 'buscar-producto', this['csrfmiddlewaretoken'].value,procesarRespuestaBuscarProducto);
 	});
 
-	function generarSelectCantidad(referencia, stock) {
-		var $select = $("<select id='select-" + referencia + "' name='" + referencia + "' class='browser-default'></select>");
+	function generarSelectCantidad(referencia, stock, id) {
+		var $select = $("<select id='select-" + referencia + "' name='cantidad-" + referencia + "' class='browser-default'></select>");
 		$select.append("<option value='1' selected>1</option>");
 
 		if (stock > 1) {
@@ -373,7 +426,7 @@ $(document).ready(function() {
 			$totalDetalle.val(cantidad * precio);
 		});
 
-		return $("<td class='select-cantidad'></td>").append($select);
+		return $("<td class='cantidad-productos'><input type='hidden' name='producto-" + referencia + "' value='" + id + "' / ></td>").append($select);
 	}
 
 	function eliminarDetalle(event) {
@@ -381,13 +434,14 @@ $(document).ready(function() {
 		var $tr = $('tr#' + referencia).remove();
 
 		listaDetalle.eliminarDetalle(referencia);
+		activarBotonGuardarFactura();
 	}
 
 	function crearBotonEliminarDetalle(referencia) {
-		var $botonEliminar = $("<a class='btn btn-floating red darken-1' data-referencia='" + referencia + "'><i class='material-icons'>delete</i></a>");
+		var $botonEliminar = $("<a class='btn btn-floating red darken-1' title='Eliminar producto de la factura' data-referencia='" + referencia + "'><i class='material-icons'>delete</i></a>");
 		$botonEliminar.on('click', eliminarDetalle);
 
-		return $('<td></td>').append($botonEliminar);
+		return $('<td class="precio-detalle"></td>').append($botonEliminar);
 	}
 
 	function clonarObjeto() {
@@ -414,9 +468,9 @@ $(document).ready(function() {
 				nuevoDetalle = clonarObjeto(objetoBusquedaProducto);
 				objetoBusquedaProducto = null;
 
-				var $tr =$("<tr id='" + nuevoDetalle.referencia + "'></tr>");
+				var $tr =$("<tr id='" + nuevoDetalle.referencia + "' class='detalle-factura'></tr>");
 				$tr.append(crearBotonEliminarDetalle(nuevoDetalle.referencia));
-				$tr.append(generarSelectCantidad(nuevoDetalle.referencia, nuevoDetalle.stock));
+				$tr.append(generarSelectCantidad(nuevoDetalle.referencia, nuevoDetalle.stock, nuevoDetalle.id));
 				$tr.append("<td>"+ nuevoDetalle.referencia + "</td>");
 				$tr.append("<td>" + nuevoDetalle.nombre + "</td>");
 				$tr.append("<td class='precio-detalle'><input id='precio-" + nuevoDetalle.referencia + "' type='text' value='" + nuevoDetalle.precio + "' readonly /></td>");
@@ -428,6 +482,7 @@ $(document).ready(function() {
 				$modalBuscarProducto.modal('close');
 				$formBuscarProducto[0].reset();
 				ocultarInfoProducto();
+				activarBotonGuardarFactura();
 			}
 			else {
 				$respuestaAgregarProducto.text("Este producto ya se agrego a la factura.").fadeIn();
@@ -443,6 +498,38 @@ $(document).ready(function() {
 
 	$btnAgregarProducto.on('click', agregarProductoFactura);
 
-	/***** FORMULARIO AGREGAR DETALLE FACTURA *****/
+	/***** FORMULARIO GUARDAR FACTURA *****/
+	$formGuardarFactura.on('submit', function(event) {
+		//Se evita que la página recargue.
+		event.preventDefault();
+		//Se activa el preloader.
+		$preloaderGuardarFactura.fadeIn();
+		//Se desactiva el botón que envía el formulario para evitar multiples peticiones.
+		$btnGuardarFactura.addClass('disabled');
+		$respuestaGuardarFactura.fadeOut();
+
+		//Se generan los datos que van a ser enviados al servidor.
+		var datos = {
+			"cliente": $inputCliente.val(),
+			"detalle": obtenerInfoDetalle()
+		}
+		console.log(datos);
+		console.log(JSON.stringify(datos));
+
+		function procesarRespuestaGuardarFactura(data) {
+			if (data.response === 'success') {
+
+			}
+			else if (data.response === 'error') {
+			}
+			
+			$respuestaGuardarFactura.html(data.mensaje).fadeIn();
+			$preloaderGuardarFactura.fadeOut();
+			$btnGuardarFactura.removeClass('disabled');
+		}
+
+		enviarPeticionAJAX(datos, "", this['csrfmiddlewaretoken'].value, procesarRespuestaGuardarFactura);
+
+	});
 	
 });

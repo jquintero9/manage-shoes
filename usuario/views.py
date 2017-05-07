@@ -23,6 +23,7 @@ from .forms import (
     BusquedaClienteForm,
     FormBusquedaCliente,
 )
+from producto.forms import FacturaForm
 from .models import Usuario, Cliente
 from .utils import enviar_email, get_namespace, get_objects
 
@@ -464,9 +465,13 @@ class HomeVendedor(LoginRequiredMixin, View):
         """
 
         if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
-            return render(request, self.template_name, {})
+            return render(request, self.template_name, {'form': FacturaForm()})
         else:
             raise PermissionDenied
+
+    def post(self, request):
+        print request.POST['detalle']
+        return render(request, self.template_name, {'form': FacturaForm()})
 
 
 @login_required(login_url=reverse_lazy('usuario:iniciar_sesion'))

@@ -180,12 +180,14 @@ class Factura(models.Model):
 
     cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT)
     vendedor = models.ForeignKey(Usuario, on_delete=models.PROTECT)
-    fecha = models.DateField(auto_now_add=True)
+    fecha = models.DateTimeField(auto_now_add=True)
 
     total_pagar = models.PositiveIntegerField(
         validators=[
             RegexValidator(regex=regex['numero'], message=error_messages['numero'])
-        ]
+        ],
+        blank=True,
+        default=0
     )
 
     class Meta:
@@ -222,7 +224,9 @@ class DetalleFactura(models.Model):
         ],
         error_messages={
             'required': u'¿Cuál es el valor del producto(s)?'
-        }
+        },
+        blank=True,
+        default=0
     )
 
     class Meta:
@@ -231,4 +235,7 @@ class DetalleFactura(models.Model):
 
     def __unicode__(self):
         return self.producto
+
+
+
 

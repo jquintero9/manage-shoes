@@ -141,7 +141,7 @@ div#respuesta-busqueda-cliente,
 div#preloader-agregar-cliente,
 .oculto { display: none; }
 
-td.select-cantidad { width: 64px; }
+td.cantidad-productos { width: 64px; }
 
 td.precio-detalle  { width: 96px; }
 

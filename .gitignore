@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
-db.sqlite3
+manage_shoes.sqlite3
 manage_shoes/settings/local.py
 .idea/
 __pycache__/

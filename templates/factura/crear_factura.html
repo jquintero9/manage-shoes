@@ -47,7 +47,7 @@
                     <h5>
                         Cliente:
                         <!-- Modal Trigger Buscar Cliente -->
-                        <a class="btn btn-floating blue darken-1 pulse" href="#modal-buscar-cliente">
+                        <a id="trigger-buscar-cliente" class="btn btn-floating blue darken-1 pulse" href="#modal-buscar-cliente">
                             <i class="material-icons">add</i>
                         </a>
                     </h5>
@@ -72,32 +72,43 @@
         <div class="col s12">
             <h5>
                 Detalle Factura
-                <a class="waves-effect waves-light btn-floating blue darken-1" href="#modal-buscar-producto">
+                <a id="trigger-buscar-producto" class="waves-effect waves-light btn-floating blue darken-1 pulse" href="#modal-buscar-producto">
                     <i class="material-icons">add</i>
                 </a>
             </h5>
             {% include 'factura/modal-buscar-producto.html' %}
-            <table class="responsive-table striped">
-                <thead>
-                    <tr>
-                        <th>ACCIÓN</th>
-                        <th>CANT</th>
-                        <th>REFERENCIA</th>
-                        <th>PRODUCTO</th>
-                        <th>PRECIO UNIT.</th>
-                        <th>TOTAL</th>
-                    </tr>
-                </thead>
-                <tbody id="body-factura">
-                </tbody>
-            </table>
-            <div class="row">
-                <div class="col s12">
-                    <div><span class="right-align">Iva</span></div>
-                    <div><span class="right-align">Subtotal</span></div>
-                    <div><span class="right-align">Total a Pagar</span></div>
+            <form id="form-guardar-factura" action="" method="POST"> {% csrf_token %}
+                <input id="cliente" type="hidden" name="cliente" />
+                <div id="preloader-guardar-factura" class="oculto">
+                    <div><span>Guardando...</span></div>
+                    <div class="progress">
+                        <div class="indeterminate blue darken-3"></div>
+                    </div> 
                 </div>
-            </div>
+                <div id="respuesta-guardar-factura" class="message-input oculto"></div>
+                <table class="responsive-table striped">
+                    <thead>
+                        <tr>
+                            <th>ACCIÓN</th>
+                            <th>CANT</th>
+                            <th>REFERENCIA</th>
+                            <th>PRODUCTO</th>
+                            <th>PRECIO UNIT.</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-factura">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col s12">
+                        <button id="btn-guardar-factura" class="btn waves-effect waves-light blue darken-3 disabled" type="submit">
+                            <i class="material-icons right">shopping_cart</i>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
