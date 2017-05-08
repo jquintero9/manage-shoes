@@ -3,8 +3,7 @@ from .models import (
     Marca,
     Producto,
     Factura,
-    DetalleFactura,
-    Talla,
+    DetalleFactura
 )
 
 # Register your models here.
@@ -38,5 +37,3 @@ admin.site.register(Marca)
 admin.site.register(Producto, ProductoAdmin)
 admin.site.register(Factura, FacturaAdmin)
 admin.site.register(DetalleFactura, DetalleFacturaAdmin)
-admin.site.register(Talla)
-

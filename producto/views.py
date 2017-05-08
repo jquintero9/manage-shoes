@@ -199,6 +199,7 @@ class ActualizacionProducto(LoginRequiredMixin, UpdateView):
     template_name = 'producto/actualizar_producto.html'
     form_class = ProductoForm
     login_url = reverse_lazy('usuario:iniciar_sesion')
+    success_url = reverse_lazy('usuario:admin_listar_productos')
 
     def get(self, request, *args, **kwargs):
         """
@@ -206,7 +207,7 @@ class ActualizacionProducto(LoginRequiredMixin, UpdateView):
         Si el permiso no es válido deniega el acceso.
         """
 
-        if request.user.has_perm(Usuario.PERMISO_ADMIN) or request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
             return super(ActualizacionProducto, self).get(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -218,13 +219,7 @@ class ActualizacionProducto(LoginRequiredMixin, UpdateView):
         Dependiendo del tipo de usuario que esté realizando la petición, se define la
         url a donde será redirigido una vez se hayan actualizado los datos.
         """
-        if request.user.has_perm(Usuario.PERMISO_ADMIN) or request.user.has_perm(Usuario.PERMISO_VENDEDOR):
-
-            if request.session.get('rol') == Usuario.ADMIN:
-                self.success_url = reverse_lazy('usuario:admin_listar_productos')
-            elif request.session.get('rol') == Usuario.VENDEDOR:
-                self.success_url = reverse_lazy('usuario:vendedor_listar_productos')
-
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
             return super(ActualizacionProducto, self).post(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -273,7 +268,8 @@ class Facturacion(LoginRequiredMixin, View):
                 'form_cliente': FormBusquedaCliente(),
                 'form_producto': BusquedaProductoForm(),
                 'form': ClienteForm(),
-                'agregar_cliente': True
+                'agregar_cliente': True,
+                'vendedor': Usuario.objects.get(user=request.user)
             }
 
             return render(request, self.template_name, context)
@@ -305,6 +301,8 @@ class Facturacion(LoginRequiredMixin, View):
                     if detalle_form.is_valid():
                         nuevo_detalle = detalle_form.save(commit=False)
                         nuevo_detalle.total = nuevo_detalle.producto.precio * nuevo_detalle.cantidad
+                        nuevo_detalle.producto.stock -= nuevo_detalle.cantidad
+                        nuevo_detalle.producto.save()
                         nuevo_detalle.save()
                         total_pagar += nuevo_detalle.total
                     else:
@@ -319,7 +317,8 @@ class Facturacion(LoginRequiredMixin, View):
             if valido:
                 response = {
                     "response": "success",
-                    "mensaje": u"La factura ha sido guardada correctamente."
+                    "mensaje": u"La factura ha sido guardada correctamente.",
+                    "url": unicode(reverse_lazy('usuario:vendedor_listar_productos'))
                 }
             else:
                 response = {

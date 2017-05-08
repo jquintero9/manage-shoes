@@ -22,57 +22,70 @@
 
 {% block contenido %}
 {% include 'mensajes.html' %}
-<div id="contenedor-factura" class="row">
+<div id="contenedor-factura" class="row blue lighten-5">
     <div id="header-factura" class="row"><!-- Cabecera Factura -->
-        <div class="col s12 m8">
-            <div class="columna contenedor-logo-factura">
-                <img id="logo-factura" class="responsive-img" src="{% static 'img/manage-shoes-logo.png' %}" />
+        <div class="col s12">
+            <div class="row">
+                <div class="contenedor-logo">
+                    <div class="col m6 logo">
+                        <img id="logo-factura" class="responsive-img" src="{% static 'img/manage-shoes-logo.png' %}" />
+                    </div>
+                    <div class="col m6 info-logo">
+                        <div><b>Manage Shoes</b></div>
+                        <div class="texto-factura">Cra 5 # 22-11</div>
+                        <div class="texto-factura">Pereira - Risaralda</div>
+                        <div class="texto-factura">manage_shoes@gmail.com</div>
+                    </div>
+                </div>
+
             </div>
-            <div class="columna contenedor-info-logo">
-                <div><b>Manage Shoes</b></div>
-                <div class="texto-factura">Cra 5 # 22-11</div>
-                <div class="texto-factura">Pereira - Risaralda</div>
-                <div class="texto-factura">manage_shoes@gmail.com</div>
-            </div>
-        </div>
-        <div class="col s12 m4">
-            <div class="texto-factura right-align"><b>Fecha:</b> XXX</div>
-            <div class="texto-factura right-align"><b>Factura N°:</b> 33</div>
         </div>
     </div>
     <div class="row">
-        <div class="col s12">
-            <div class="columna contenedor-info-cliente">  <!--- Información Cliente -->
-                <div>
-                    <h5>
-                        Cliente:
-                        <!-- Modal Trigger Buscar Cliente -->
-                        <a id="trigger-buscar-cliente" class="btn btn-floating blue darken-1 pulse" href="#modal-buscar-cliente">
-                            <i class="material-icons">add</i>
-                        </a>
-                    </h5>
-                    {% include 'factura/modal-agregar-cliente.html' %}
-                    {% include 'factura/modal-buscar-cliente.html' %}
-                </div>
-                <div id="cedula-cliente" class="texto-factura"></div>
-                <div id="nombre-cliente" class="texto-factura"></div>
-                <div id="direccion-cliente" class="texto-factura"></div>
-                <div id="ciudad-cliente" class="texto-factura"></div>
-                <div id="telefono-cliente" class="texto-factura"></div>
+        <div class="col s12 m6">
+            <div>
+                <h5>
+                    Cliente:
+                    <!-- Modal Trigger Buscar Cliente -->
+                    <a id="trigger-buscar-cliente" class="btn btn-floating red darken-1 pulse" href="#modal-buscar-cliente">
+                        <i class="material-icons">add</i>
+                    </a>
+                </h5>
+                {% include 'factura/modal-agregar-cliente.html' %}
+                {% include 'factura/modal-buscar-cliente.html' %}
             </div>
-            <div class="columna contenedor-info-vendedor"> <!-- Información Vendedor -->
-                <h6 class="right-align">Vendedor:</h6>
-                <div class="texto-factura right-align">{{ user }}</div>
-                <div class="texto-factura right-align">{{ user.nombres }}</div>
-                <div class="texto-factura right-align">{{ user.apellidos }}</div>
+            <div class="row no-margin-bottom">
+                <div class="col s12 m3"><span class="texto-factura"><b>Cedula: </b></span></div>
+                <div class="col s12 m9"><span id="cedula-cliente" class="texto-factura"></span></div>
             </div>
+            <div class="row no-margin-bottom">
+                <div class="col s12 m3"><span class="texto-factura"><b>Nombre: </b></span></div>
+                <div class="col s12 m9"><span id="nombre-cliente" class="texto-factura"></span></div>
+            </div>
+            <div class="row no-margin-bottom">
+                <div class="col s12 m3"><span class="texto-factura"><b>Dirección: </b></span></div>
+                <div class="col s12 m9"><span id="direccion-cliente" class="texto-factura"></span></div>
+            </div>
+            <div class="row no-margin-bottom">
+                <div class="col s12 m3"><span class="texto-factura"><b>Ciudad: </b></span></div>
+                <div class="col s12 m9"><span id="ciudad-cliente" class="texto-factura"></span></div>
+            </div>
+            <div class="row no-margin-bottom">
+                <div class="col s12 m3"><span class="texto-factura"><b>Teléfono: </b></span></div>
+                <div class="col s12 m9"><span id="telefono-cliente" class="texto-factura"></span></div>
+            </div>
+        </div>
+        <div class="col s12 m6"><!-- Información Vendedor -->
+            <h5 class="right-align">Vendedor</h5>
+            <div class="right-align"><span class="texto-factura"><b>Correo: </b>{{ vendedor.user }}</span></div>
+            <div class="right-align"><span class="texto-factura"><b>Nombre: </b>{{ vendedor.nombre_completo }}</span></div>
         </div>
     </div>
     <div class="row"> <!-- Detalle factura -->
         <div class="col s12">
             <h5>
                 Detalle Factura
-                <a id="trigger-buscar-producto" class="waves-effect waves-light btn-floating blue darken-1 pulse" href="#modal-buscar-producto">
+                <a id="trigger-buscar-producto" class="waves-effect waves-light btn-floating red darken-1 pulse" href="#modal-buscar-producto">
                     <i class="material-icons">add</i>
                 </a>
             </h5>
@@ -86,20 +99,52 @@
                     </div> 
                 </div>
                 <div id="respuesta-guardar-factura" class="message-input oculto"></div>
-                <table class="responsive-table striped">
+                <table id="tabla-productos" class="striped">
                     <thead>
                         <tr>
                             <th>ACCIÓN</th>
-                            <th>CANT</th>
                             <th>REFERENCIA</th>
-                            <th>PRODUCTO</th>
+                            <th>DESCRIPCIÓN</th>
+                            <th>CANT</th>
                             <th>PRECIO UNIT.</th>
+                            <th>SUBTOTAL</th>
+                            <th>IVA (19%)</th>
                             <th>TOTAL</th>
                         </tr>
                     </thead>
                     <tbody id="body-factura">
                     </tbody>
                 </table>
+                <div class="row no-margin-bottom">
+                    <div class="col s12 m5">    
+                        <div class="col s12 m6">
+                            <span><b>SUBTOTAL SIN IVA:</b></span>
+                        </div>
+                        <div class="col s12 m6">
+                            <input id="subtotal-factura" class="no-margin-bottom" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-margin-bottom">
+                    <div class="col s12 m5">    
+                        <div class="col s12 m6">
+                            <span><b>IVA:</b></span>
+                        </div>
+                        <div class="col s12 m6">
+                            <input id="iva-factura" class="no-margin-bottom" readonly />
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-margin-bottom">
+                    <div class="col s12 m5">    
+                        <div class="col s12 m6">
+                            <span><b>TOTAL:</b></span>
+                        </div>
+                        <div class="col s12 m6">
+                            <input id="total-factura" class="no-margin-bottom" readonly />
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col s12">
                         <button id="btn-guardar-factura" class="btn waves-effect waves-light blue darken-3 disabled" type="submit">

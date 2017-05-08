@@ -38,8 +38,6 @@ urlpatterns = [
     url(r'^usuario/admin/cliente/(?P<pk>\d+)/eliminar$', EliminacionCliente.as_view(), name='eliminar_cliente'),
     url(r'^usuario/vendedor$', HomeVendedor.as_view(), name='vendedor_home'),
     url(r'^usuario/vendedor/producto/lista$', ListaProducto.as_view(), name='vendedor_listar_productos'),
-    url(r'^usuario/vendedor/producto/(?P<pk>\d+)/editar$',
-        ActualizacionProducto.as_view(), name='vendedor_editar_producto'),
     url(r'^usuario/vendedor/cliente/crear$', RegistroCliente.as_view(), name='vendedor_registrar_cliente'),
     url(r'^usuario/vendedor/cliente/lista$', ListaCliente.as_view(), name='vendedor_listar_clientes'),
     url(r'^usuario/vendedor/cliente/(?P<pk>\d+)/editar$',

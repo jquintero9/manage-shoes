@@ -104,36 +104,40 @@ div#collection-buscar-producto {
 }
 
 /* Estilos de la factura */
-div.contenedor-logo-factura {
-    width: 20%;
+div.contenedor-logo {
+    margin: 0 auto;
+    max-width: 400px;
+    height: 69px;
 }
 
-div.contenedor-info-logo {
-    width: 80%;
+div.logo { 
+    max-width: 100px;
+    height: 69px;
+}
+img#logo-factura { 
+    margin: 15px auto;
+    width:  100px; 
+}
+div.info-logo { max-width: 200px; }
+
+.texto-factura { font-size: 0.8rem; }
+
+input.no-margin-bottom,
+div.no-margin-bottom { margin: 0 0 0 0; }
+
+input.no-margin-bottom {
+    display: inline; 
+    border: 1px solid #555;
+    height: 28px;
+    width: 70%;
+    text-align: right;
 }
 
-div.texto-factura {
-    font-size: 0.8rem;
-}
-
-.columna {
-    float: left;
-}
-
-.columna-derecha {
-    float: right;
-}
-
-div.contenedor-info-cliente {
-    width: 50%;
-}
-
-div.contenedor-info-vendedor {
-    width: 50%;
-}
+div.total-pagar { border: 1px solid #555; }
 
 div#contenedor-factura,
 div#header-factura { border: 1px solid #DDD; }
+table#tabla-productos { margin-bottom: 40px; }
 
 /* Estilos de los elementos preloader de las ventanas modales. */
 div#preloader-buscar-cliente,

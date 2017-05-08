@@ -80,7 +80,9 @@
                     <th>Estilo</th>
                     <th>Stock</th>
                     <th>Precio</th>
+                    {% if request.session.rol == 'administrador' %}
                     <th class="center">Acciones</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -90,20 +92,16 @@
                     <td>{{ producto.id_referencia }}</td>
                     <td>{{ producto.marca }}</td>
                     <td>{{ producto.nombre }}</td>
-                    <td>
-                    {% for talla in producto.tallas.all %}
-                    {{ talla }}
-                    {% endfor %}
-                    </td>
+                    <td>{{ producto.talla }}</td>
                     <td>{{ producto.genero }}</td>
                     <td>{{ producto.estilo }}</td>
                     <td>{{ producto.stock }}</td>
                     <td>${{ producto.precio }}</td>
                     <td>
+                        {% if request.session.rol == 'administrador' %}
                         <a class="waves-effect waves-light btn blue darken-1" title="Editar" href="{% url namespace_editar_producto producto.id %}">
                             <i class="material-icons">mode_edit</i>
                         </a>
-                        {% if request.session.rol == 'administrador' %}
                         <a class="waves-effect waves-light btn red darken-1" title="Eliminar" href="#modal-eliminar-{{ producto.id }}">
                             <i class="material-icons">delete</i>
                         </a>

@@ -46,9 +46,6 @@ $(document).ready(function() {
 					}
 				}
 			}
-
-			console.log("getDetalle");
-				console.log(detalle);
 			
 			return detalle;
 		}
@@ -101,11 +98,11 @@ $(document).ready(function() {
 
 	/***** Elementos donde se visualizan los datos del cliente en la factura. *****/
 	$infoCliente = {
-		'cedula': $('div#cedula-cliente'),
-		'nombre': $('div#nombre-cliente'),
-		'direccion': $('div#direccion-cliente'),
-		'ciudad': $('div#ciudad-cliente'),
-		'telefono': $('div#telefono-cliente')	
+		'cedula': $('span#cedula-cliente'),
+		'nombre': $('span#nombre-cliente'),
+		'direccion': $('span#direccion-cliente'),
+		'ciudad': $('span#ciudad-cliente'),
+		'telefono': $('span#telefono-cliente')	
 	}
 
 	/********** VARIABLES DEL COMPONENTE BUSCAR Y AGREGAR PRODUCTO **********/
@@ -149,6 +146,15 @@ $(document).ready(function() {
 	//Preloader guardar factura.
 	$preloaderGuardarFactura = $('div#preloader-guardar-factura');
 
+	subtotalFactura = ivaFactura = totalFactura = 0; 
+	
+	$totalFactura = {
+		"subtotal": $('input#subtotal-factura'),
+		"iva": $('input#iva-factura'),
+		"total": $('input#total-factura')
+	}
+
+
 	/********** DEFINICIÓN DE FUNCIONES **********/
 
 	/* 
@@ -159,7 +165,12 @@ $(document).ready(function() {
 	function mostrarInfo(contenedores, valores, id) {
 		for (campo in valores) {
 			try {
-				contenedores[campo].text(valores[campo]).fadeIn();
+				if (campo == 'precio') {
+					contenedores[campo].text(convertirPesos(String(valores[campo]))).fadeIn();
+				}
+				else {
+					contenedores[campo].text(valores[campo]).fadeIn();
+				}	
 			} catch(err) {}
 		}
 	}
@@ -167,34 +178,49 @@ $(document).ready(function() {
 	function activarBotonGuardarFactura() {
 		if (clienteAgregado && !listaDetalle.listaVacia()) {
 			$btnGuardarFactura.removeClass('disabled');
-			$triggerBuscarCliente.removeClass('pulse');
-			$triggerBuscarProducto.removeClass('pulse');
 		}
 		else {
 			$btnGuardarFactura.addClass('disabled');
 		}
 
 		if (clienteAgregado) {
-			if ($triggerBuscarCliente.hasClass('pulse')) {
-				$triggerBuscarCliente.removeClass('pulse');
-			}
+			$triggerBuscarCliente.removeClass('pulse red').addClass('blue');
 		}
 		else {
-			if (!$triggerBuscarCliente.hasClass('pulse')) {
-				$triggerBuscarCliente.addClass('pulse');	
-			}
+			$triggerBuscarCliente.removeClass('blue').addClass('pulse red');	
 		}
 
 		if (!listaDetalle.listaVacia()) {
-			if ($triggerBuscarProducto.hasClass('pulse')) {
-				$triggerBuscarProducto.removeClass('pulse');
-			}
+			$triggerBuscarProducto.removeClass('pulse red').addClass('blue');
+			
 		}
 		else {
-			if (!$triggerBuscarProducto.hasClass('pulse')) {
-				$triggerBuscarProducto.addClass('pulse');
+			$triggerBuscarProducto.removeClass('blue').addClass('pulse red');
+		}
+	}
+
+	function actualizarTotalFactura(operacion, subtotal, iva, total) {
+
+		var valido = (subtotal > 0) && (iva > 0) && (total > 0);
+
+		if (valido) {
+			if (operacion === 'sumar') {
+				subtotalFactura += subtotal;
+				ivaFactura += iva;
+				totalFactura += total;
+			}
+			else if (operacion === 'restar') {
+				if (subtotalFactura > 0 && ivaFactura > 0 && totalFactura > 0) {
+					subtotalFactura -= subtotal;
+					ivaFactura -= iva;
+					totalFactura -= total;
+				}
 			}
 		}
+
+		$totalFactura.subtotal.val(subtotalFactura);
+		$totalFactura.iva.val(ivaFactura);
+		$totalFactura.total.val(totalFactura);
 	}
 
 	/* Esta función obtiene y retorna una lista con los ID'S y las cantidades 
@@ -204,12 +230,8 @@ $(document).ready(function() {
 		var listaProductos = Array();
 
 		$detalles.each(function(i) {
-			console.log(this.childNodes);
 			var producto = this.childNodes[0].value;
 			var cantidad = this.childNodes[1].value;
-
-			console.log("producto: " + producto);
-			console.log("cantidad: " + cantidad);
 
 			listaProductos.push({"producto": producto, "cantidad": cantidad});
 		});
@@ -235,14 +257,37 @@ $(document).ready(function() {
 		});
 	}
 
-	/********** ASIGNACIÓN DE EVENTOS **********/
+   
+	function convertirPesos(cadena) {
+		var cadenaPuntuacion = "";
+		var cadenaConvertida = "$";
+		var cont = 1;
+		var j = cadena.length - 1;
 
+		for (j; j >= 0; j--) {
+			cadenaPuntuacion += cadena.charAt(j);
+			if (cont % 3 == 0 && (j != cadena.length - 1) && (j != 0)) {
+				cadenaPuntuacion += ".";
+			}
+			cont++;
+		}
+
+		var i = cadenaPuntuacion.length - 1;
+
+		for (i; i >= 0; i--) {
+			cadenaConvertida += cadenaPuntuacion.charAt(i);
+		}
+
+		return cadenaConvertida;
+	}
 
 	function asignarIDCliente(id) {
 		$inputCliente.val(id);
 		clienteAgregado = true;
 		activarBotonGuardarFactura();
 	}
+
+	/********** ASIGNACIÓN DE EVENTOS **********/
 
 	/***** FORMULARIO BUSCAR CLIENTE *****/
 
@@ -322,8 +367,6 @@ $(document).ready(function() {
 		/*Se procesa la respuesta del servidor*/
 		function procesarRespuestaAgregarCliente(data) {
 			if (data.response === 'success') {
-				console.log('ok...');
-				console.log(data);
 				mostrarInfo($infoCliente, data);
 				asignarIDCliente(data.id);
 				$modalAgregarCliente.modal('close');
@@ -378,9 +421,7 @@ $(document).ready(function() {
 		Esta función procesa la respuesta del servidor.
 		*/
 		function procesarRespuestaBuscarProducto(data) {
-			console.log(data);
 			if (data.response === 'success') {
-				console.log('ok.. producto encontrado');
 				
 				mostrarInfo($infoProducto, data);
 				$respuestaBuscarProducto.fadeOut();
@@ -407,7 +448,7 @@ $(document).ready(function() {
 		enviarPeticionAJAX(dato, 'buscar-producto', this['csrfmiddlewaretoken'].value,procesarRespuestaBuscarProducto);
 	});
 
-	function generarSelectCantidad(referencia, stock, id) {
+	function generarSelectCantidad(referencia, stock) {
 		var $select = $("<select id='select-" + referencia + "' name='cantidad-" + referencia + "' class='browser-default'></select>");
 		$select.append("<option value='1' selected>1</option>");
 
@@ -419,18 +460,44 @@ $(document).ready(function() {
 		}
 
 		$select.on('blur', function(event) {
-			var $precioDetalle = $('input#precio-' + referencia);
-			var $totalDetalle = $('input#total-' + referencia);
+			var $precio = $('input#precio-' + referencia);
+			var $subtotal = $('input#subtotal-' + referencia);
+			var $iva = $('input#iva-' + referencia);
+			var $total = $('input#total-' + referencia);
+
+			var subtotalAnt = Number($subtotal.val());
+			var ivaAnt = Number($iva.val());
+			var totalAnt = Number($total.val());
+
+			actualizarTotalFactura('restar', subtotalAnt, ivaAnt, totalAnt);
+
 			var cantidad = Number(this.value);
-			var precio = Number($precioDetalle.val());
-			$totalDetalle.val(cantidad * precio);
+			var precio = Number($precio.val());
+			var subtotal = cantidad * precio;
+			var iva = Math.round(subtotal * 0.19);
+			var total = subtotal + iva;
+
+			actualizarTotalFactura('sumar', subtotal, iva, total);
+
+			$subtotal.val(subtotal);
+			$iva.val(iva);
+			$total.val(total);
+
+			//actualizarTotalFactura();
 		});
 
-		return $("<td class='cantidad-productos'><input type='hidden' name='producto-" + referencia + "' value='" + id + "' / ></td>").append($select);
+		return $select;
 	}
 
 	function eliminarDetalle(event) {
 		var referencia = this.dataset.referencia;
+
+		var subtotal = $('input#subtotal-' + referencia).val();
+		var iva = $('input#iva-' + referencia).val();
+		var total = $('input#total-' + referencia).val();
+
+		actualizarTotalFactura('restar', subtotal, iva, total);
+
 		var $tr = $('tr#' + referencia).remove();
 
 		listaDetalle.eliminarDetalle(referencia);
@@ -464,21 +531,34 @@ $(document).ready(function() {
 
 		if (objetoBusquedaProducto != null) {
 			if (!listaDetalle.existe(objetoBusquedaProducto.referencia)) {
-				console.log("Agregando detalle...");
 				nuevoDetalle = clonarObjeto(objetoBusquedaProducto);
 				objetoBusquedaProducto = null;
 
-				var $tr =$("<tr id='" + nuevoDetalle.referencia + "' class='detalle-factura'></tr>");
-				$tr.append(crearBotonEliminarDetalle(nuevoDetalle.referencia));
-				$tr.append(generarSelectCantidad(nuevoDetalle.referencia, nuevoDetalle.stock, nuevoDetalle.id));
-				$tr.append("<td>"+ nuevoDetalle.referencia + "</td>");
+				var referencia = nuevoDetalle.referencia;
+				var precio = Number(nuevoDetalle.precio);
+				var $selectCantidad = generarSelectCantidad(referencia, nuevoDetalle.stock);
+				var cantidad = Number($selectCantidad.val());
+				var subtotal = precio * cantidad;
+				var iva = Math.round(subtotal * 0.19);
+				var total = subtotal + iva;
+				var $tr =$("<tr id='" + referencia + "' class='detalle-factura'></tr>");
+				var $tdCantidad = $("<td class='cantidad-productos'><input type='hidden' name='producto-" + referencia + "' value='" + nuevoDetalle.id + "' / ></td>"); 
+				
+				$tdCantidad.append($selectCantidad);
+				$tr.append(crearBotonEliminarDetalle(referencia));
+				$tr.append("<td>"+ referencia + "</td>");
 				$tr.append("<td>" + nuevoDetalle.nombre + "</td>");
-				$tr.append("<td class='precio-detalle'><input id='precio-" + nuevoDetalle.referencia + "' type='text' value='" + nuevoDetalle.precio + "' readonly /></td>");
-				$tr.append("<td class='precio-detalle'><input id='total-" + nuevoDetalle.referencia + "' value='"+ nuevoDetalle.precio + "' readonly /></td>");
+				$tr.append($tdCantidad);
+				$tr.append("<td class='precio-detalle'><input id='precio-" + referencia + "' type='text' value='" + precio + "' readonly /></td>");
+				$tr.append("<td class='precio-detalle'><input id='subtotal-" + referencia + "' type='text' value='" + subtotal + "' readonly /></td>")
+				$tr.append("<td class='precio-detalle'><input id='iva-" + referencia + "' value='" + iva + "' readonly /></td>");
+				$tr.append("<td class='precio-detalle'><input id='total-" + referencia + "' value='"+ total + "' readonly /></td>");
 				$detalleFactura.append($tr);
 
+				actualizarTotalFactura('sumar', subtotal, iva, total);
+
 				listaDetalle.agregarDetalle(nuevoDetalle);
-				console.log(listaDetalle);
+				
 				$modalBuscarProducto.modal('close');
 				$formBuscarProducto[0].reset();
 				ocultarInfoProducto();
@@ -513,17 +593,15 @@ $(document).ready(function() {
 			"cliente": $inputCliente.val(),
 			"detalle": obtenerInfoDetalle()
 		}
-		console.log(datos);
-		console.log(JSON.stringify(datos));
 
 		function procesarRespuestaGuardarFactura(data) {
 			if (data.response === 'success') {
-
+				location.replace(data.url);
 			}
 			else if (data.response === 'error') {
+				$respuestaGuardarFactura.html(data.mensaje).fadeIn();
 			}
-			
-			$respuestaGuardarFactura.html(data.mensaje).fadeIn();
+
 			$preloaderGuardarFactura.fadeOut();
 			$btnGuardarFactura.removeClass('disabled');
 		}

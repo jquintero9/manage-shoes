@@ -45,30 +45,6 @@ class Marca(models.Model):
         return choices
 
 
-class Talla(models.Model):
-
-    """
-    Representa el Rango de tallas de los los zapatos.
-    """
-
-    numero = models.CharField(
-        max_length=2,
-        validators=[
-            RegexValidator(regex=regex['talla'], message=error_messages['talla'])
-        ],
-        error_messages={
-            'required': u'¿Cuál es el número de talla?'
-        },
-        unique=True
-    )
-
-    class Meta:
-        db_table = 'tallas'
-
-    def __unicode__(self):
-        return self.numero
-
-
 class Producto(models.Model):
 
     """
@@ -84,6 +60,26 @@ class Producto(models.Model):
     ESTILO = (
         ('deportivo', 'Deportivo'),
         ('formal', 'Formal'),
+    )
+
+    TALLA = (
+        ('27', '27'),
+        ('28', '28'),
+        ('29', '29'),
+        ('30', '30'),
+        ('31', '31'),
+        ('32', '32'),
+        ('33', '33'),
+        ('34', '34'),
+        ('35', '35'),
+        ('36', '36'),
+        ('37', '37'),
+        ('38', '38'),
+        ('39', '39'),
+        ('40', '40'),
+        ('41', '41'),
+        ('42', '42'),
+        ('43', '43'),
     )
 
     id_referencia = models.CharField(
@@ -131,7 +127,13 @@ class Producto(models.Model):
         choices=ESTILO
     )
 
-    tallas = models.ManyToManyField('Talla', related_name='talla_producto', db_table='tallas_producto')
+    talla = models.CharField(
+        max_length=2,
+        validators=[
+            RegexValidator(regex=regex['talla'], message=error_messages['talla'])
+        ],
+        choices=TALLA
+    )
 
     stock = models.PositiveSmallIntegerField(
         validators=[
