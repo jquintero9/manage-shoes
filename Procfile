@@ -1,0 +1,1 @@
+web: gunicorn manage_shoes.wsgi
