@@ -1,0 +1,152 @@
+
+form#form-center-autenticacion,
+form#form-center {
+    float: none;
+}
+
+form#form-center-autenticacion { margin: 64px auto 150px auto; }
+
+form#form-center { margin: 0 auto; }
+
+div#input-email,
+div#input-password,
+div#input-submit {
+    float: none;
+    margin: 0 auto;
+}
+
+div#input-submit { margin-bottom: 32px; }
+
+.titulo-form {
+    text-align: center;
+}
+
+.last-input
+{
+    margin-bottom: 32px;
+}
+
+div#last-row { padding-bottom: 10px; }
+
+.message-input {
+    border: orange 1px solid;
+    border-radius: 10px;
+    background-color: #DDD;
+    padding: 10px;
+}
+
+a.link-form {
+    text-decoration: underline;
+}
+
+div#producto-collapsible,
+div#cuentas-collapsible,
+div#cliente-collapsible,
+div#opcion-collapsible,
+div#factura-collapsible,
+div#contenedor-buscar-cedula {
+    padding: 0;
+}
+
+div#contenido { min-height: 680px; }
+
+div#menu-vertical {
+    padding: 0;
+}
+
+ul#lista-menu-vertical {
+    margin-top: 0;
+}
+
+li#header-estilo,
+li#header-genero,
+li#header-marca {
+    padding: 1px;
+}
+
+h4#titulo-buscar {
+    padding: 1px;
+}
+
+ul#seccion-marcas {
+    overflow: scroll;
+    max-height: 240px;
+}
+
+span#nombre-usuario {
+    font-size: 1.1rem;
+}
+
+div#contenedor-logo {
+    float: none;
+    margin: 0 auto;
+    width: 200px;
+    height: 96px;
+}
+
+img.logo-header {
+    height: 56px;
+}
+
+/* Estilos del template crear factura. */
+
+/* Estilos de los elementos
+que contienen los forumularos,
+para buscar cliente y productos.
+ */
+#btn-buscar-producto { margin-top: 16px; }
+
+
+div#collection-buscar-cliente,
+div#collection-buscar-producto {
+    padding: 0;
+    margin-top: 1px;
+}
+
+/* Estilos de la factura */
+div.contenedor-logo {
+    margin: 0 auto;
+    max-width: 400px;
+    height: 69px;
+}
+
+div.logo { 
+    max-width: 100px;
+    height: 69px;
+}
+img#logo-factura { 
+    margin: 15px auto;
+    width:  100px; 
+}
+div.info-logo { max-width: 200px; }
+
+.texto-factura { font-size: 0.8rem; }
+
+input.no-margin-bottom,
+div.no-margin-bottom { margin: 0 0 0 0; }
+
+input.no-margin-bottom {
+    display: inline; 
+    border: 1px solid #555;
+    height: 28px;
+    width: 70%;
+    text-align: right;
+}
+
+div.total-pagar { border: 1px solid #555; }
+
+div#contenedor-factura,
+div#header-factura { border: 1px solid #DDD; }
+table#tabla-productos { margin-bottom: 40px; }
+
+/* Estilos de los elementos preloader de las ventanas modales. */
+div#preloader-buscar-cliente,
+div#respuesta-busqueda-cliente,
+div#preloader-agregar-cliente,
+.oculto { display: none; }
+
+td.cantidad-productos { width: 64px; }
+
+td.precio-detalle  { width: 96px; }
+
+
