@@ -5,7 +5,6 @@
 Esta es la configuración para ejecutar la aplicación en producción
 """
 
-
 """
 Se importa la configuración de la aplicacipón para obtener
 la instancia de la base de datos que está utilizando la aplicación.
@@ -17,6 +16,7 @@ dj_database_url: Realiza una sincronización entre la base de datos
 de la aplicación y la base de datos del servidor (Heroku)
 """
 import dj_database_url
+import os
 
 """Se desactiva el modo debug de la aplicación, para que no muestre
 información detallada en caso de que ocurra un error."""
@@ -33,3 +33,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = ['*']
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+EMAIL_HOST_USER = os.environ['EMAIL']
+EMAIL_HOST_PASSWORD = os.environ['PASSWORD']
