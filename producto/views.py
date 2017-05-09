@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -300,10 +301,16 @@ class Facturacion(LoginRequiredMixin, View):
 
                     if detalle_form.is_valid():
                         nuevo_detalle = detalle_form.save(commit=False)
-                        nuevo_detalle.total = nuevo_detalle.producto.precio * nuevo_detalle.cantidad
+
+                        subtotal = nuevo_detalle.cantidad * nuevo_detalle.producto.precio
+                        iva = subtotal * 0.19
+                        total = subtotal + iva
+
+                        nuevo_detalle.total = total
                         nuevo_detalle.producto.stock -= nuevo_detalle.cantidad
                         nuevo_detalle.producto.save()
                         nuevo_detalle.save()
+
                         total_pagar += nuevo_detalle.total
                     else:
                         valido = False
@@ -318,7 +325,7 @@ class Facturacion(LoginRequiredMixin, View):
                 response = {
                     "response": "success",
                     "mensaje": u"La factura ha sido guardada correctamente.",
-                    "url": unicode(reverse_lazy('usuario:vendedor_listar_productos'))
+                    "url": unicode(reverse_lazy('usuario:vendedor_listar_facturas'))
                 }
             else:
                 response = {
@@ -327,6 +334,32 @@ class Facturacion(LoginRequiredMixin, View):
                 }
 
             return HttpResponse(json.dumps(response))
+        else:
+            raise PermissionDenied
+
+
+class ListaFactura(LoginRequiredMixin, View):
+
+    """
+    Lista todas las facturas.
+    """
+
+    template_name = 'factura/lista_facturas.html'
+    numero_paginas = 4
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+
+    def get(self, request):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) \
+                or request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+            pagina = request.GET.get('page')
+            paginacion = Paginator(Factura.objects.all(), self.numero_paginas)
+
+            context = {
+                'facturas': get_objects(paginacion, pagina),
+                'numero_paginas': range(1, paginacion.num_pages + 1)
+            }
+
+            return render(request, self.template_name, context)
         else:
             raise PermissionDenied
 

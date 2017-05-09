@@ -17,8 +17,4 @@
 {% block contenido %}
 {% include 'mensajes.html' %}
 <p>Home</p>
-<form action="" method="POST"> {% csrf_token %}
-	{{ form.as_p }}
-	<button class="btn" type="submit">Enviar</button>
-</form>
 {% endblock %}

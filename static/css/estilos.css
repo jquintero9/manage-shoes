@@ -39,14 +39,7 @@ a.link-form {
     text-decoration: underline;
 }
 
-div#producto-collapsible,
-div#cuentas-collapsible,
-div#cliente-collapsible,
-div#opcion-collapsible,
-div#factura-collapsible,
-div#contenedor-buscar-cedula {
-    padding: 0;
-}
+.no-padding { padding: 0; }
 
 div#contenido { min-height: 680px; }
 

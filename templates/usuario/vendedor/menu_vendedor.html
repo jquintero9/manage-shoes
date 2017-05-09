@@ -2,18 +2,22 @@
 <ul id="lista-menu-vertical" class="collapsible" data-collapsible="accordion">
     <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">description</i>Facturas</div>
-        <div id="factura-collapsible" class="collapsible-body">
+        <div class="collapsible-body no-padding">
             <div class="collection">
                 <a href="{% url 'usuario:crear_factura' %}" class="collection-item">
                     Crear
                     <i class="material-icons left">add</i>
+                </a>
+                <a href="{% url 'usuario:vendedor_listar_facturas' %}" class="collection-item">
+                    Listar
+                    <i class="material-icons left">list</i>
                 </a>
             </div>
         </div>
     </li>
     <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">shopping_cart</i>Productos</div>
-        <div id="producto-collapsible" class="collapsible-body">
+        <div class="collapsible-body no-padding">
             <div class="collection">
                 <a href="{% url 'usuario:vendedor_listar_productos' %}" class="collection-item">
                     Listar
@@ -24,7 +28,7 @@
     </li>
     <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">assignment_ind</i>Clientes</div>
-        <div id="cliente-collapsible" class="collapsible-body">
+        <div class="collapsible-body no-padding">
             <div class="collection">
                 <a href="{% url 'usuario:vendedor_registrar_cliente' %}" class="collection-item">
                     <i class="material-icons left">add</i>
@@ -39,7 +43,7 @@
     </li>
     <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">settings</i>Opciones</div>
-        <div id="opcion-collapsible" class="collapsible-body">
+        <div class="collapsible-body no-padding">
             <div class="collection">
                 <a href="{% url 'usuario:cerrar_sesion' %}" class="collection-item">
                     <i class="material-icons left">system_update_alt</i>

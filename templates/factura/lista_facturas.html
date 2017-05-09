@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Lista de Facturas- {{ user }}{% endblock %}
+
+{% block menuopciones %}
+{% if request.session.rol == 'administrador' %}
+{% include 'usuario/admin/menu_admin.html' %}
+{% elif request.session.rol == 'vendedor' %}
+{% include 'usuario/vendedor/menu_vendedor.html' %}
+{% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+<a class="breadcrumb">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">Facturas</a>
+<a class="breadcrumb">Lista de Facturas</a>
+{% endblock %}
+
+{% block contenido %}
+<div class="row">
+    {% if facturas %}
+    <table class="responsive-table striped">
+        <thead>
+            <tr>
+                <th>Factura</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Fecha</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for factura in facturas %}
+            <tr>
+                <td>{{ factura.id }}</td>
+                <td>
+                    <a href="#cliente-{{ factura.cliente.cedula }}">{{ factura.cliente.cedula }}</a>
+                    <div id="cliente-{{ factura.cliente.cedula }}" class="modal">
+                        <div class="modal-content">
+                            <h2 class="center white-text blue darken-1">
+                                <i class="material-icons center medium">assignment_ind</i>
+                                Cliente
+                            </h2>
+                            <div class="row">
+                                <div class="col s12 m3">
+                                    <div><span><b>Cédula:</b></span></div>
+                                    <div><span><b>Nombre:</b></span></div>
+                                    <div><span><b>Dirección:</b></span></div>
+                                    <div><span><b>Teléfono:</b></span></div>
+                                    <div><span><b>Ciudad:</b></span></div>
+                                </div>
+                                <div class="col s12 m9">
+                                    <div><span>{{ factura.cliente.cedula }}</span></div>
+                                    <div><span>{{ factura.cliente.nombre_completo }}</span></div>
+                                    <div><span>{{ factura.cliente.direccion }}</span></div>
+                                    <div><span>{{ factura.cliente.telefono }}</span></div>
+                                    <div><span>{{ factura.cliente.ciudad }}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="modal-action modal-close waves-effect waves-green btn-flat">Cerrar</a>
+                        </div>
+                    </div>
+                </td>
+                <td>{{ factura.vendedor }}</td>
+                <td>{{ factura.fecha }}</td>
+                <td>{{ factura.total_pagar }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <ul class="pagination">
+        {% if facturas.has_previous %}
+        <li class="waves-effect"><a href="?page={{ facturas.previous_page_number }}" title="anterior"><i class="material-icons">chevron_left</i></a></li>
+        {% else %}
+        <li class="disabled"><a><i class="material-icons">chevron_left</i></a></li>
+        {% endif %}
+        {% for i in numero_paginas %}
+        {% if i == facturas.number %}
+        <li class="active blue darken-1"><a>{{ i }}</a></li>
+        {% else %}
+        <li class="waves-effect"><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if facturas.has_next %}
+        <li class="waves-effect"><a href="?page={{ facturas.next_page_number }}" title="siguiente"><i class="material-icons">chevron_right</i></a></li>
+        {% else %}
+        <li class="disabled"><a><i class="material-icons">chevron_right</i></a></li>
+        {% endif %}
+    </ul>
+    {% else %}
+    <div class="message-input">
+        <span>No hay facturas registradas.</span>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

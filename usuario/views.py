@@ -465,13 +465,9 @@ class HomeVendedor(LoginRequiredMixin, View):
         """
 
         if request.user.has_perm(Usuario.PERMISO_VENDEDOR):
-            return render(request, self.template_name, {'form': FacturaForm()})
+            return render(request, self.template_name, {})
         else:
             raise PermissionDenied
-
-    def post(self, request):
-        print request.POST['detalle']
-        return render(request, self.template_name, {'form': FacturaForm()})
 
 
 @login_required(login_url=reverse_lazy('usuario:iniciar_sesion'))
