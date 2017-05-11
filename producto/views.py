@@ -5,7 +5,7 @@ import re
 import json
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
@@ -359,6 +359,22 @@ class ListaFactura(LoginRequiredMixin, View):
                 'numero_paginas': range(1, paginacion.num_pages + 1)
             }
 
+            return render(request, self.template_name, context)
+        else:
+            raise PermissionDenied
+
+
+class Comprobante(LoginRequiredMixin, View):
+
+    template_name = 'factura/comprobante.html'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+
+    def get(self, request, *args, **kwargs):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN) \
+                or request.user.has_perm(Usuario.PERMISO_VENDEDOR):
+            factura = get_object_or_404(Factura, id=kwargs.get('pk'))
+
+            context = {'factura': factura}
             return render(request, self.template_name, context)
         else:
             raise PermissionDenied

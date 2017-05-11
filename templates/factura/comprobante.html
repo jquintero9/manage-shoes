@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comprobante - {{ user }}{% endblock %}
+
+{% block menuopciones %}
+{% if request.session.rol == 'administrador' %}
+{% include 'usuario/admin/menu_admin.html' %}
+{% elif request.session.rol == 'vendedor' %}
+{% include 'usuario/vendedor/menu_vendedor.html' %}
+{% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+{% if request.session.rol == 'administrador' %}
+<a href="{% url 'usuario:admin_home' %}" class="breadcrumb">
+    Home
+</a>
+{% elif request.session.rol == 'vendedor' %}
+<a href="{% url 'usuario:vendedor_home' %}" class="breadcrumb">
+    Home
+</a>
+{% endif %}
+<a class="breadcrumb">Facturas</a>
+{% if request.session.rol == 'administrador' %}
+<a href="{% url 'usuario:admin_listar_facturas' %}" class="breadcrumb">
+    Lista Facturas
+</a>
+{% elif request.session.rol == 'vendedor' %}
+<a href="{% url 'usuario:vendedor_listar_facturas' %}" class="breadcrumb">
+    Lista Facturas
+</a>
+{% endif %}
+<a class="breadcrumb">Comprobante</a>
+{% endblock %}
+
+{% block contenido %}
+<div id="comprobante" class="col s12 m10 blue lighten-5">
+    <div class="row"><!-- Cabecera del Comprobante -->
+        <div class="col s12 m4">
+            <img class="logo" src="{% static 'img/manage-shoes-logo.png' %}" />
+        </div>
+        <div class="col s12 m4">
+            <h6 class="center header-title"><b>MANAGE SHOES</b></h6>
+            <div class="center header-content"><span class="texto-factura">Nit: 9.999.999-9</span></div>
+            <div class="center header-content"><span class="texto-factura">manage_shoes@gmail.com</span></div>
+            <div class="center header-content"><span class="texto-factura">Pereira-Risaralda</span></div>
+        </div>
+        <div class="col s12 m4">
+            <div class="col s12 no-padding">
+                <div class="numero-factura"><span><b>FACTURA: </b></span>{{ factura.id }}</div>
+            </div>
+            
+            <div class="col s12 m4 no-padding center">
+                <div class="white-text blue darken-1 tag-fecha"><span>DÍA</span></div>
+                <div class="fecha">{{ factura.fecha.day }}</div>
+            </div>
+            <div class="col s12 m4 no-padding center">
+                <div class="white-text blue darken-1 tag-fecha"><span>MES</span></div>
+                <div class="fecha">{{ factura.fecha.month }}</div>
+            </div>
+            <div class="col s12 m4 no-padding center">
+                <div class="white-text blue darken-1 tag-fecha"><span>AÑO</span></div>
+                <div class="fecha">{{ factura.fecha.year }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+    </div>
+</div>
+{% endblock %}

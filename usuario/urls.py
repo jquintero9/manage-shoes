@@ -23,6 +23,7 @@ from producto.views import (
     Facturacion,
     ListaFactura,
     buscar_producto,
+    Comprobante,
 )
 
 urlpatterns = [
@@ -38,6 +39,7 @@ urlpatterns = [
     url(r'^usuario/admin/cliente/(?P<pk>\d+)/editar$', ActualizacionCliente.as_view(), name='admin_editar_cliente'),
     url(r'^usuario/admin/cliente/(?P<pk>\d+)/eliminar$', EliminacionCliente.as_view(), name='eliminar_cliente'),
     url(r'^usuario/admin/factura/lista$', ListaFactura.as_view(), name='admin_listar_facturas'),
+    url(r'^usuario/admin/factura/(?P<pk>\d+)$', Comprobante.as_view(), name='admin_ver_factura'),
     url(r'^usuario/vendedor$', HomeVendedor.as_view(), name='vendedor_home'),
     url(r'^usuario/vendedor/producto/lista$', ListaProducto.as_view(), name='vendedor_listar_productos'),
     url(r'^usuario/vendedor/cliente/crear$', RegistroCliente.as_view(), name='vendedor_registrar_cliente'),
@@ -48,7 +50,8 @@ urlpatterns = [
     url(r'^usuario/vendedor/factura/buscar-cliente$', buscar_cliente, name='buscar_cliente'),
     url(r'^usuario/vendedor/factura/registrar-cliente$', registrar_cliente, name='registrar_cliente'),
     url(r'^usuario/vendedor/factura/buscar-producto$', buscar_producto, name='buscar_producto'),
-    url(r'^usuario/admin/factura/lista$', ListaFactura.as_view(), name='vendedor_listar_facturas'),
+    url(r'^usuario/vendedor/factura/lista$', ListaFactura.as_view(), name='vendedor_listar_facturas'),
+    url(r'^usuario/vendedor/factura/(?P<pk>\d+)$', Comprobante.as_view(), name='vendedor_ver_factura'),
     url(r'^cuentas/registrar$', RegistroVendedor.as_view(), name='registrar_vendedor'),
     url(r'^cuentas/registrar/success$',
         TemplateView.as_view(template_name='usuario/autenticacion/registro_success.html'),

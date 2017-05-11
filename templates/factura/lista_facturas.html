@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% load staticfiles %}
-
 {% block title %}Lista de Facturas- {{ user }}{% endblock %}
 
 {% block menuopciones %}
@@ -37,7 +35,13 @@
         <tbody>
             {% for factura in facturas %}
             <tr>
-                <td>{{ factura.id }}</td>
+                <td>
+                    {% if request.session.rol == 'administrador' %}
+                    <a href="{% url 'usuario:admin_ver_factura' factura.id %}">{{ factura.id }}</a>
+                    {% elif request.session.rol == 'vendedor' %}
+                    <a href="{% url 'usuario:vendedor_ver_factura' factura.id %}">{{ factura.id }}</a>
+                    {% endif %}
+                </td>
                 <td>
                     <a href="#cliente-{{ factura.cliente.cedula }}">{{ factura.cliente.cedula }}</a>
                     <div id="cliente-{{ factura.cliente.cedula }}" class="modal">

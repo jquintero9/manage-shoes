@@ -197,7 +197,7 @@ class Factura(models.Model):
         ordering = ['-fecha']
 
     def __unicode__(self):
-        return '%s ' % self.id
+        return '%s' % self.id
 
 
 class DetalleFactura(models.Model):

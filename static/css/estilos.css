@@ -111,6 +111,7 @@ img#logo-factura {
     margin: 15px auto;
     width:  100px; 
 }
+
 div.info-logo { max-width: 200px; }
 
 .texto-factura { font-size: 0.8rem; }
@@ -142,4 +143,37 @@ td.cantidad-productos { width: 64px; }
 
 td.precio-detalle  { width: 96px; }
 
+/**** Estilos del comprobante de factura ****/
+div#comprobante { 
+    float: none;
+    margin: 0.25rem auto;
+}
+img.logo { 
+    width: 100px;
+    height: 64px;
+}
 
+h6.header-title { margin: 0 auto; }
+
+div.header-content {
+    height: 13px;
+}
+
+div.numero-factura {
+    margin-bottom: 4px;
+}
+
+div.fecha {
+    border: 1px solid #555;
+}
+
+div.tag-fecha {
+    padding: 0 5px;
+    border-radius: 5px 5px 0 0;
+}
+
+div.contenedor-fecha:not(:last-child) { width: 40px; }
+
+div.contenedor-fecha:last-child {
+    width: 64px;
+}
