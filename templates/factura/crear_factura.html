@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block breadcrumb %}
-<a class="breadcrumb">
+<a href="{% url 'usuario:vendedor_home' %}" class="breadcrumb">
     <i class="material-icons left">store</i>
     Home
 </a>
@@ -23,7 +23,7 @@
 {% block contenido %}
 {% include 'mensajes.html' %}
 <div id="contenedor-factura" class="row blue lighten-5">
-    <div id="header-factura" class="row"><!-- Cabecera Factura -->
+    <!--<div id="header-factura" class="row">
         <div class="col s12">
             <div class="row">
                 <div class="contenedor-logo">
@@ -40,7 +40,7 @@
 
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="row">
         <div class="col s12 m6">
             <div>

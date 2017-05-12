@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block breadcrumb %}
-<a class="breadcrumb">
+<a class="breadcrumb" href="{% url 'usuario:admin_home' %}">
     <i class="material-icons left">store</i>
     Home
 </a>
@@ -54,19 +54,15 @@
     </tbody>
 </table>
     <div class="input-field">
-        <button id="boton-guardar" class="btn waves-effect waves-light disabled" type="submit">Guardar
+        <button id="boton-guardar" class="btn waves-effect waves-light disabled blue" type="submit">Guardar
             <i class="material-icons right">send</i>
         </button>
     </div>
 </form>
 {% else %}
-<div class="chip">
-    No hay solicitudes pendientes.
-    <i class="close material-icons">close</i>
-</div>
+<div class="message-input"><span>No hay solicitudes pendientes</span></div>
 {% endif %}
 {% endblock %}
-
 
 {% block jsfiles %}
 <script src="{% static 'js/activar_cuentas.js' %}"></script>

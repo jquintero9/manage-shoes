@@ -302,11 +302,7 @@ class Facturacion(LoginRequiredMixin, View):
                     if detalle_form.is_valid():
                         nuevo_detalle = detalle_form.save(commit=False)
 
-                        subtotal = nuevo_detalle.cantidad * nuevo_detalle.producto.precio
-                        iva = subtotal * 0.19
-                        total = subtotal + iva
-
-                        nuevo_detalle.total = total
+                        nuevo_detalle.total = nuevo_detalle.cantidad * nuevo_detalle.producto.precio
                         nuevo_detalle.producto.stock -= nuevo_detalle.cantidad
                         nuevo_detalle.producto.save()
                         nuevo_detalle.save()
@@ -325,7 +321,7 @@ class Facturacion(LoginRequiredMixin, View):
                 response = {
                     "response": "success",
                     "mensaje": u"La factura ha sido guardada correctamente.",
-                    "url": unicode(reverse_lazy('usuario:vendedor_listar_facturas'))
+                    "url": unicode(reverse_lazy('usuario:vendedor_ver_factura', kwargs={'pk': factura.id}))
                 }
             else:
                 response = {
@@ -364,6 +360,23 @@ class ListaFactura(LoginRequiredMixin, View):
             raise PermissionDenied
 
 
+def calcular_total_factura(detalles):
+    subtotal = 0
+
+    for detalle in detalles:
+        subtotal += (detalle.cantidad * detalle.producto.precio)
+
+    iva = subtotal * 0.19
+
+    total = {
+        'subtotal': subtotal,
+        'iva': iva,
+        'total_pagar': subtotal + iva
+    }
+
+    return total
+
+
 class Comprobante(LoginRequiredMixin, View):
 
     template_name = 'factura/comprobante.html'
@@ -374,7 +387,17 @@ class Comprobante(LoginRequiredMixin, View):
                 or request.user.has_perm(Usuario.PERMISO_VENDEDOR):
             factura = get_object_or_404(Factura, id=kwargs.get('pk'))
 
-            context = {'factura': factura}
+            detalles = DetalleFactura.objects.filter(factura=factura)
+            total = calcular_total_factura(detalles)
+
+            context = {
+                'factura': factura,
+                'detalles': detalles,
+                'subtotal': total.get('subtotal'),
+                'iva': total.get('iva'),
+                'total_pagar': total.get('total_pagar')
+            }
+
             return render(request, self.template_name, context)
         else:
             raise PermissionDenied

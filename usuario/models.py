@@ -65,6 +65,9 @@ class Usuario(models.Model):
     def nombre_completo(self):
         return '%s %s' % (self.nombres, self.apellidos)
 
+    def get_absolute_url(self):
+        return reverse_lazy('usuario:eliminar_cuenta', kwargs={'pk': self.user.id})
+
     def __unicode__(self):
         return self.user.username
 

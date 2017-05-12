@@ -2,18 +2,31 @@
 
 {% block title %}Te has registrado con éxito{% endblock %}
 
+{% block header %}
+{% include 'header_autenticacion.html' %}
+{% endblock %}
+
 {% block contenido_autenticacion %}
 <div class="container">
-<div class="row">
-    <h2 class="center-align blue-text text-darken-4">Te has registrado con éxito</h2>
-    <div class="col s12">
-        <p>
+<div class="row collection-success">
+    <ul class="collection with-header">
+        <li class="collection-header blue darken-1">
+            <h5 class="white-text center">
+                <i class="material-icons center">verified_user</i>
+                Te has registrado con éxito
+            </h5>
+        </li>
+        <li class="collection-item texto-success">
             Tu solicitud ha sido enviada. Ahora solo falta que el <b>Administrador</b> del sitio active tu cuenta.
-        </p>
-        <p>
-            Te enviaremos un correo electrónico cuando tu cuenta halla sido activada. :)
-        </p>
-    </div>
+            <br />Te enviaremos un correo electrónico cuando tu cuenta halla sido activada. :)
+        </li>
+        <li class="collection-item">
+            <a href="{% url 'usuario:iniciar_sesion' %}" class="btn blue darken-1">
+                <i class="material-icons right">store</i>
+                Iniciar Sesión
+            </a>
+        </li>
+    </ul>
 </div>
 </div>
 {% endblock %}

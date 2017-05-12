@@ -8,7 +8,7 @@ from django.conf import settings
 from django.urls import reverse_lazy
 
 regex = {
-    'texto': r'^[A-Za-záéíóúÁÉÍÓÚ\s]+$',
+    'texto': r'^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$',
     'rol': r'^(administrador|vendedor)$',
     'cedula': r'^[0-9]{10}$',
     'direccion': r'^[a-zA-Z0-9#\-\s]+$',

@@ -15,10 +15,12 @@
 {% block breadcrumb %}
 {% if request.session.rol == 'administrador' %}
 <a href="{% url 'usuario:admin_home' %}" class="breadcrumb">
+    <i class="material-icons">store</i>
     Home
 </a>
 {% elif request.session.rol == 'vendedor' %}
 <a href="{% url 'usuario:vendedor_home' %}" class="breadcrumb">
+    <i class="material-icons">store</i>
     Home
 </a>
 {% endif %}
@@ -36,8 +38,8 @@
 {% endblock %}
 
 {% block contenido %}
-<div id="comprobante" class="col s12 m10 blue lighten-5">
-    <div class="row"><!-- Cabecera del Comprobante -->
+<div id="comprobante" class="col s12 m10 blue lighten-5 z-depth-4">
+    <div id="cabecera-comprobante" class="row"><!-- Cabecera del Comprobante -->
         <div class="col s12 m4">
             <img class="logo" src="{% static 'img/manage-shoes-logo.png' %}" />
         </div>
@@ -66,8 +68,91 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row"> <!-- Información del cliente. -->
+        <div class="row celda"> <!-- Cliente y Cédula -->
+            <div class="col s12 m6">
+                <span><b>Cliente: </b></span>
+                {{ factura.cliente.nombre_completo }}
+            </div>
+            <div class="col s12 m6">
+                <span><b>Cédula: </b></span>
+                {{ factura.cliente.cedula }}
+            </div>
+        </div>
+        <div class="row celda"> <!-- Direccíón, Teléfono y Ciudad -->
+            <div class="col s12 m5">
+                <span><b>Dirección: </b></span>
+                {{ factura.cliente.direccion }}
+            </div>
+            <div class="col s12 m3">
+                <span><b>Teléfono: </b></span>
+                {{ factura.cliente.telefono }}
+            </div>
+            <div class="col s12 m4">
+                <span><b>Ciudad: </b></span>
+                {{ factura.cliente.ciudad }}
+            </div>
+        </div>
+    </div>
+    <div class="row"> <!-- Detalle de la Factura. -->
+        <div class="col s12 no-padding">
+            <div class="col s12 m2">
+                <div class="celda center blue darken-1 white-text">
+                    <div><span><b>CANT</b></span></div>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="celda center blue darken-1 white-text">
+                    <div><span><b>PRODUCTO</b></span></div>
+                </div>
 
+            </div>
+            <div class="col s12 m3">
+                <div class="celda center blue darken-1 white-text">
+                    <div><span><b>$VAL UNI</b></span></div>
+                </div>
+
+            </div>
+            <div class="col s12 m3">
+                <div class="celda center blue darken-1 white-text">
+                    <div><span><b>$TOTAL</b></span></div>
+                </div>
+            </div>
+        </div>
+        {% if detalles %}
+        {% for detalle in detalles %}
+        <div class="col s12 no-padding">
+            <div class="col s12 m2">
+                <div class="celda center"><span>{{ detalle.cantidad }}</span></div>
+            </div>
+            <div class="col s12 m4">
+                <div class="celda center"><span>{{ detalle.producto.nombre }}</span></div>
+            </div>
+            <div class="col s12 m3">
+                <div class="celda center"><span>${{ detalle.producto.precio }}</span></div>
+            </div>
+            <div class="col s12 m3">
+                <div class="celda center"><span>${{ detalle.total }}</span></div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="row"> <!-- Total a pagar -->
+        <div class="col s12 m6 celda blue lighten-4">
+            <div class="col s12 margin"><!-- Subtotal -->
+                <div class="col s12 m4"><span><b>SUBTOTAL:</b></span></div>
+                <div class="col s12 m4 offset-m4 celda right-align"><span><b>${{ subtotal }}</b></span></div>
+            </div>
+            <div class="col s12 margin"> <!-- IVA -->
+                <div class="col s12 m4"><span><b>IVA(19%)</b></span></div>
+                <div class="col s12 m4 offset-m4 celda right-align"><span><b>${{ iva }}</b></span></div>
+            </div>
+            <div class="col s12 margin">
+                <div class="col s12 m4"><span><b>TOTAL A PAGAR:</b></span></div>
+                <div class="col s12 m4 offset-m4 celda right-align"><span><b>${{ total_pagar }}</b></span></div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

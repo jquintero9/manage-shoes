@@ -11,10 +11,17 @@
 {% endblock %}
 
 {% block breadcrumb %}
-<a class="breadcrumb">
+{% if request.session.rol == 'administrador' %}
+<a class="breadcrumb" href="{% url 'usuario:admin_home' %}">
     <i class="material-icons left">store</i>
     Home
 </a>
+{% elif request.session.rol == 'vendedor' %}
+<a class="breadcrumb" href="{% url 'usuario:vendedor_home' %}">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+{% endif %}
 <a class="breadcrumb">Clientes</a>
 <a class="breadcrumb">Lista de Clientes</a>
 {% endblock %}

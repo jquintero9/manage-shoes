@@ -34,12 +34,21 @@
 {% endblock %}
 
 {% block breadcrumb %}
-<a class="breadcrumb">
+{% if request.session.rol == 'administrador' %}
+<a class="breadcrumb" href="{% url 'usuario:admin_home' %}">
     <i class="material-icons left">store</i>
     Home
 </a>
-<a class="breadcrumb">Producto</a>
-<a class="breadcrumb">Lista de Productos</a>
+<a class="breadcrumb">Productos</a>
+<a href="{% url 'usuario:admin_listar_productos' %}" class="breadcrumb">Lista de Productos</a>
+{% elif request.session.rol == 'vendedor' %}
+<a class="breadcrumb" href="{% url 'usuario:vendedor_home' %}">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">Productos</a>
+<a href="{% url 'usuario:vendedor_listar_productos' %}" class="breadcrumb">Lista de Productos</a>
+{% endif %}
 {% endblock %}
 
 {% block barrabusqueda %}

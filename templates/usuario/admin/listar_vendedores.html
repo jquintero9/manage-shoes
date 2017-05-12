@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista Vendedores - {{ user }}{% endblock %}
+
+{% block menuopciones %}
+{% include 'usuario/admin/menu_admin.html' %}
+{% endblock %}
+
+{% block breadcrumb %}
+<a class="breadcrumb" href="{% url 'usuario:admin_home' %}">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">Cuentas</a>
+<a class="breadcrumb">Lista Vendedores</a>
+{% endblock %}
+
+{% block contenido %}
+<div class="row">
+    {% if vendedores %}
+    <table class="responsive-table striped">
+        <thead>
+            <tr>
+                <th>Correo</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for vendedor in vendedores %}
+            <tr>
+                <td>{{ vendedor.user.username }}</td>
+                <td>{{ vendedor.nombres }}</td>
+                <td>{{ vendedor.apellidos }}</td>
+                <td>
+                    <a href="#modal-{{ vendedor.user.username }}" class="btn floating red darken-1">
+                        <i class="material-icons">delete</i>
+                    </a>
+                    <div id="modal-{{ vendedor.user.username }}" class="modal">
+                        <div class="modal-content">
+                            <ul class="collection with-header">
+                                <li class="collection-header blue darken-1"><h5 class="white-text">¿Está seguro que desea eliminar la cuenta del usuario {{ vendedor.user.username }}?</h5></li>
+                                <li class="collection-item">
+                                    <form action="{% url 'usuario:eliminar_cuenta' vendedor.user.id %}" method="POST"> {% csrf_token %}
+                                        <button class="btn red darken-1" type="submit">Si<i class="material-icons right">send</i></button>
+                                        <a class="modal-action modal-close btn blue darken-1">No</a>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+
+    {% endif %}
+</div>
+{% endblock %}

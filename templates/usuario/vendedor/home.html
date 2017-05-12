@@ -15,6 +15,55 @@
 
 
 {% block contenido %}
-{% include 'mensajes.html' %}
-<p>Home</p>
+<div>
+    <div class="row no-padding">
+        <h3 class="blue-text darken-1 center titulo-home">Bienvenido al sistema {{ user | upper }}</h3>
+    </div>
+    <div class="row">
+        <div id="contenedor-centrado" class="col s12 m10">
+            <div class="col s12 m4">
+                <div class="acceso-directo blue darken-1 z-depth-4">
+                    <div>
+                        <h5 class="white-text center">
+                            <i class="material-icons large center">description</i>
+                        </h5>
+                    </div>
+                    <div class="acceso blue lighten-5">
+                        <a class="btn-floating blue darken-1 center boton-acceso" href="{% url 'usuario:crear_factura' %}" title="Crear Factura">
+                            <i class="material-icons center">add</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="acceso-directo blue darken-1 z-depth-4">
+                    <div>
+                        <h5 class="white-text center">
+                            <i class="material-icons large center">assignment_ind</i>
+                        </h5>
+                    </div>
+                    <div class="acceso blue lighten-5">
+                        <a class="btn-floating blue darken-1 center boton-acceso" href="{% url 'usuario:vendedor_registrar_cliente' %}" title="Registrar Cliente">
+                            <i class="material-icons center">add</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="acceso-directo blue darken-1 z-depth-4">
+                    <div>
+                        <h5 class="white-text center">
+                            <i class="material-icons large center">shopping_cart</i>
+                        </h5>
+                    </div>
+                    <div class="acceso blue lighten-5">
+                        <a class="btn-floating blue darken-1 center boton-acceso" href="{% url 'usuario:vendedor_listar_productos' %}" title="Listar Productos">
+                            <i class="material-icons center">list</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

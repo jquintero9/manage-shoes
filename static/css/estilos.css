@@ -146,8 +146,13 @@ td.precio-detalle  { width: 96px; }
 /**** Estilos del comprobante de factura ****/
 div#comprobante { 
     float: none;
-    margin: 0.25rem auto;
+    margin: 32px auto;
 }
+
+#cabecera-comprobante {
+    padding: 10px;
+}
+
 img.logo { 
     width: 100px;
     height: 64px;
@@ -176,4 +181,48 @@ div.contenedor-fecha:not(:last-child) { width: 40px; }
 
 div.contenedor-fecha:last-child {
     width: 64px;
+}
+
+div.celda {
+    margin-bottom: 8px;
+    padding: 1%;
+    border-radius: 10px;
+    border: 1px solid #555;
+    background-color: #FFF;
+}
+
+div.margin { margin-top: 8px; }
+
+/* Estilos de la vista Registro exitoso */
+div.collection-success {
+    margin: 128px;
+}
+
+.texto-success { font-size: 1.2rem; }
+
+/* Estilos del Home */
+#contenedor-centrado {
+    float: none;
+    margin: 32px auto;
+}
+
+.acceso-directo {
+    border-radius: 8px;
+}
+
+.acceso {
+    position: relative;
+    height: 60px;
+    padding: 10px;
+    border-top: 1px solid #1e88e5;
+}
+
+.boton-acceso {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.titulo-home {
+    margin: 8px auto;
 }

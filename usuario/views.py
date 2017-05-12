@@ -4,9 +4,10 @@
 import json
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login, logout
@@ -431,6 +432,61 @@ class ActivacionCuentas(LoginRequiredMixin, View,):
             raise PermissionDenied
 
 
+class ListaVendedor(LoginRequiredMixin, View):
+    """
+    Mustra la lista de los usuarios vendedores.
+    """
+    template_name = 'usuario/admin/listar_vendedores.html'
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+
+    def get(self, request):
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            context = {
+                'vendedores': Usuario.objects.filter(rol=Usuario.VENDEDOR)
+            }
+            return render(request, self.template_name, context)
+        else:
+            raise PermissionDenied
+
+
+class EliminacionCuenta(LoginRequiredMixin, View):
+
+    """
+    Permite al usuario administrador eliminar las cuentas de los usuarios vendedores.
+    """
+
+    login_url = reverse_lazy('usuario:iniciar_sesion')
+    success_url = reverse_lazy('usuario:listar_vendedores')
+
+    def get(request):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el permiso no es válido deniega el acceso.
+        """
+        if request.user.has_perm(Usuario.ADMIN):
+            raise Http404
+        else:
+            raise PermissionDenied
+
+    def post(self, request, **kwargs):
+        """
+        Verifca el permiso del usuario que está intentado acceder a la vista.
+        Si el
+        """
+        if request.user.has_perm(Usuario.PERMISO_ADMIN):
+            pk = kwargs.get('pk')
+            user = get_object_or_404(User, pk=pk)
+            usuario = get_object_or_404(Usuario, user=user)
+
+            if usuario.rol == 'vendedor':
+                user.delete()
+                return HttpResponseRedirect(self.success_url)
+            else:
+                raise PermissionDenied
+        else:
+            raise PermissionDenied
+
+
 class HomeAdmin(LoginRequiredMixin, View):
     """
     Muestra la vista del home del administrador.
@@ -446,7 +502,9 @@ class HomeAdmin(LoginRequiredMixin, View):
         """
 
         if request.user.has_perm(Usuario.PERMISO_ADMIN):
-            return render(request, self.template_name, {})
+            cuentas_sin_activar = Usuario.objects.filter(activo=False)
+
+            return render(request, self.template_name, {'numero_cuentas': len(cuentas_sin_activar)})
         else:
             raise PermissionDenied
 

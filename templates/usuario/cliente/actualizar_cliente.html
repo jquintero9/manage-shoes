@@ -11,14 +11,19 @@
 {% endblock %}
 
 {% block breadcrumb %}
-<a class="breadcrumb">
+{% if request.session.rol == 'administrador' %}
+<a class="breadcrumb" href="{% url 'usuario:admin_home' %}">
     <i class="material-icons left">store</i>
     Home
 </a>
 <a class="breadcrumb">Clientes</a>
-{% if request.session.rol == 'administrador' %}
 <a href="{% url 'usuario:admin_listar_clientes' %}" class="breadcrumb">Lista de Clientes</a>
 {% elif request.session.rol == 'vendedor' %}
+<a class="breadcrumb" href="{% url 'usuario:vendedor_home' %}">
+    <i class="material-icons left">store</i>
+    Home
+</a>
+<a class="breadcrumb">Clientes</a>
 <a href="{% url 'usuario:vendedor_listar_clientes' %}" class="breadcrumb">Lista de Clientes</a>
 {% endif %}
 <a class="breadcrumb">Editar Cliente</a>

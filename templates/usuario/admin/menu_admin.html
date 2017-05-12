@@ -2,14 +2,15 @@
 <ul id="lista-menu-vertical" class="collapsible" data-collapsible="accordion">
     <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">supervisor_account</i>Cuentas</div>
-        <div id="cuentas-collapsible" class="collapsible-body">
-            <!--<ul>
-                <li><a href="{% url 'usuario:activar_cuentas' %}">Activar cuentas</a></li>
-            </ul>-->
+        <div class="collapsible-body no-padding">
             <div class="collection">
                 <a href="{% url 'usuario:activar_cuentas' %}" class="collection-item">
                     Activar cuentas
                     <i class="material-icons left">verified_user</i>
+                </a>
+                 <a href="{% url 'usuario:listar_vendedores' %}" class="collection-item">
+                    Lista Vendedores
+                    <i class="material-icons left">list</i>
                 </a>
             </div>
         </div>
@@ -27,7 +28,7 @@
     </li>
     <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">shopping_cart</i>Productos</div>
-        <div id="producto-collapsible" class="collapsible-body">
+        <div class="collapsible-body no-padding">
             <div class="collection">
                 <a href="{% url 'usuario:crear_producto' %}" class="collection-item">
                     <i class="material-icons left">add</i>
@@ -42,7 +43,7 @@
     </li>
     <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">assignment_ind</i>Clientes</div>
-        <div id="cliente-collapsible" class="collapsible-body">
+        <div class="collapsible-body no-padding">
             <div class="collection">
                 <a href="{% url 'usuario:admin_registrar_cliente' %}" class="collection-item">
                     <i class="material-icons left">add</i>
@@ -57,7 +58,7 @@
     </li>
     <li>
         <div class="collapsible-header blue darken-1 white-text"><i class="material-icons">settings</i>Opciones</div>
-        <div id="opcion-collapsible" class="collapsible-body">
+        <div class="collapsible-body no-padding">
             <div class="collection">
                 <a href="{% url 'usuario:cerrar_sesion' %}" class="collection-item">
                     <i class="material-icons left">system_update_alt</i>
